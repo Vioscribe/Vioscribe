@@ -16,10 +16,12 @@ type QueuedCard = { card: Card; retry: boolean };
 export default function ReviewSession({
   deckId,
   deckTitle,
+  roomId = null,
   initialCards,
 }: {
   deckId: string;
   deckTitle: string;
+  roomId?: string | null;
   initialCards: Card[];
 }) {
   // Queue: missed cards are pushed to the end so they show up again sooner.
@@ -40,6 +42,7 @@ export default function ReviewSession({
       form.set("card_id", card.id);
       form.set("result", result);
       form.set("today", today);
+      if (roomId) form.set("room_id", roomId);
       await reviewCard(form);
 
       setFlipped(false);
@@ -56,8 +59,8 @@ export default function ReviewSession({
   if (!current) {
     return (
       <div className="space-y-4">
-        <Link href={`/decks/${deckId}`} className="text-sm text-stone-500 hover:underline">
-          ← {deckTitle}
+        <Link href={roomId ? `/rooms/${roomId}` : `/decks/${deckId}`} className="text-sm text-stone-500 hover:underline">
+          ← {roomId ? "Room" : deckTitle}
         </Link>
         <h1 className="text-2xl font-semibold">All caught up</h1>
         <p className="text-stone-600">No more cards due in this deck right now.</p>
@@ -68,8 +71,8 @@ export default function ReviewSession({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Link href={`/decks/${deckId}`} className="text-sm text-stone-500 hover:underline">
-          ← {deckTitle}
+        <Link href={roomId ? `/rooms/${roomId}` : `/decks/${deckId}`} className="text-sm text-stone-500 hover:underline">
+          ← {roomId ? "Room" : deckTitle}
         </Link>
         <p className="text-sm text-stone-400">{queue.length} left</p>
       </div>

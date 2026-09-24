@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { addFriendByCode, respondToFriendRequest } from "@/app/actions";
+import Leaderboard from "@/components/Leaderboard";
+import LeaderboardTabs from "@/components/LeaderboardTabs";
 import { createClient } from "@/lib/supabase/server";
 
 type FriendRow = { friend_id: string; display_name: string };
-type LeaderboardRow = { user_id: string; display_name: string; cards_reviewed: number };
 type RequestRow = {
   request_id: string;
   direction: "incoming" | "outgoing";
@@ -37,10 +38,12 @@ export default async function FriendsPage({
 
   const friends = (friendsResult.data ?? []) as FriendRow[];
   const requests = (requestsResult.data ?? []) as RequestRow[];
-  const leaderboard = (leaderboardResult.data ?? []) as LeaderboardRow[];
+  const leaderboard = (leaderboardResult.data ?? []) as import("@/components/Leaderboard").LeaderboardEntry[];
 
   return (
     <div className="space-y-8">
+      <LeaderboardTabs active="friends" />
+
       <header className="space-y-2">
         <h1 className="text-2xl font-semibold">Friends</h1>
         <p className="text-sm text-stone-500">Share codes to connect and compare weekly study progress.</p>
@@ -125,16 +128,9 @@ export default async function FriendsPage({
       <section className="space-y-3">
         <div>
           <h2 className="text-lg font-medium">Weekly leaderboard</h2>
-          <p className="text-xs text-stone-500">Cards reviewed since Monday 00:00 UTC. Each review, including a retry, counts.</p>
+          <p className="text-xs text-stone-500">Minutes from study timer sessions or cards reviewed since Monday 00:00 UTC.</p>
         </div>
-        <ol className="space-y-2">
-          {leaderboard.map((row, index) => (
-            <li key={row.user_id} className="flex items-center justify-between rounded-lg border border-stone-200 bg-white px-4 py-3 text-sm">
-              <span><span className="mr-3 text-stone-500">{index + 1}.</span>{row.display_name}{row.user_id === user.id ? " (you)" : ""}</span>
-              <span className="font-mono text-amber-300">{row.cards_reviewed}</span>
-            </li>
-          ))}
-        </ol>
+        <Leaderboard entries={leaderboard} currentUserId={user.id} period="week" />
       </section>
     </div>
   );

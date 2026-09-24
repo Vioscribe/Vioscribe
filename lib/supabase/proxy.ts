@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/decks", "/notes", "/streak", "/friends"];
+const PROTECTED_PREFIXES = ["/decks", "/notes", "/streak", "/friends", "/rooms", "/heatmap"];
 
 // Refresh the auth cookie on every request and gate study pages behind login
 export async function updateSession(request: NextRequest) {

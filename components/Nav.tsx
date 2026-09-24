@@ -7,6 +7,8 @@ const links = [
   { href: "/notes", label: "Notes" },
   { href: "/streak", label: "Streak" },
   { href: "/friends", label: "Friends" },
+  { href: "/rooms", label: "Rooms" },
+  { href: "/heatmap", label: "Activity" },
 ];
 
 export default function Nav({ displayName }: { displayName: string }) {

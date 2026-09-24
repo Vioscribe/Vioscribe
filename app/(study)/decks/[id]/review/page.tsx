@@ -5,10 +5,13 @@ import type { Card } from "@/lib/types";
 
 export default async function ReviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ room?: string }>;
 }) {
   const { id } = await params;
+  const { room: roomId } = await searchParams;
   const supabase = await createClient();
 
   const { data: deck } = await supabase
@@ -18,6 +21,12 @@ export default async function ReviewPage({
     .single();
 
   if (!deck) notFound();
+
+  // The room RLS policy permits this read only while the signed-in user belongs.
+  if (roomId) {
+    const { data: room } = await supabase.from("rooms").select("id").eq("id", roomId).single();
+    if (!room) notFound();
+  }
 
   // Due cards first (including brand-new ones, whose next_review_at is "now")
   const { data: cards } = await supabase
@@ -31,6 +40,7 @@ export default async function ReviewPage({
     <ReviewSession
       deckId={deck.id}
       deckTitle={deck.title}
+      roomId={roomId || null}
       initialCards={(cards || []) as Card[]}
     />
   );

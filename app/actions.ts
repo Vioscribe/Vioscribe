@@ -117,6 +117,41 @@ export async function respondToFriendRequest(formData: FormData) {
   redirect("/friends?updated=1");
 }
 
+export async function createStudyRoom() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data, error } = await supabase.rpc("create_study_room").single();
+  if (error || !data) redirect(`/rooms?error=${encodeURIComponent(error?.message || "Could not create room")}`);
+  const room = data as { room_id: string };
+  redirect(`/rooms/${room.room_id}`);
+}
+
+export async function joinStudyRoom(formData: FormData) {
+  const code = String(formData.get("code") || "").trim();
+  if (!code) redirect("/rooms?error=Enter%20a%20room%20code");
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: roomId, error } = await supabase.rpc("join_study_room", { room_code: code });
+  if (error || !roomId) redirect(`/rooms?error=${encodeURIComponent(error?.message || "Could not join room")}`);
+  redirect(`/rooms/${roomId}`);
+}
+
+export async function leaveStudyRoom(formData: FormData) {
+  const roomId = String(formData.get("room_id") || "");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.rpc("leave_study_room", { target_room_id: roomId });
+  if (error) redirect(`/rooms/${roomId}?error=${encodeURIComponent(error.message)}`);
+  redirect("/rooms?left=1");
+}
+
 export async function saveCard(formData: FormData) {
   const deckId = String(formData.get("deck_id") || "");
   const cardId = String(formData.get("card_id") || "");
@@ -146,6 +181,7 @@ export async function deleteCard(formData: FormData) {
 export async function reviewCard(formData: FormData) {
   const cardId = String(formData.get("card_id") || "");
   const known = String(formData.get("result") || "") === "got_it";
+  const roomId = String(formData.get("room_id") || "") || null;
   const today = todayFromForm(formData);
 
   const supabase = await createClient();
@@ -174,7 +210,7 @@ export async function reviewCard(formData: FormData) {
 
   const { error: reviewLogError } = await supabase
     .from("study_reviews")
-    .insert({ user_id: user.id, card_id: card.id });
+    .insert({ user_id: user.id, card_id: card.id, room_id: roomId });
   if (reviewLogError) throw new Error(reviewLogError.message);
 
   const { data: profile } = await supabase
