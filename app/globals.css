@@ -110,74 +110,194 @@ a:hover {
   outline: none;
 }
 
-/* Small, decorative homepage companion; pointer events pass through it. */
+/* Small, interactive homepage ember companion. */
 .home-mascot {
   position: fixed;
   right: 1rem;
   bottom: 0.75rem;
   z-index: 10;
   display: flex;
-  width: 3.5rem;
+  width: 3.65rem;
+  height: 4rem;
   flex-direction: column;
   align-items: center;
-  gap: 0.05rem;
-  border: 1px solid #393027;
-  border-radius: 0.65rem;
-  background: rgb(12 10 8 / 82%);
-  padding: 0.35rem 0.3rem 0.2rem;
+  justify-content: center;
+  gap: 0.12rem;
+  overflow: visible;
+  border: 1px solid #4a3322;
+  border-radius: 0.8rem;
+  background: #100d0a;
+  padding: 0.35rem;
   color: #facc15;
   font-family: var(--font-plex-mono), monospace;
   font-size: 0.65rem;
   line-height: 1;
-  pointer-events: none;
+  cursor: pointer;
   user-select: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.home-mascot:hover,
+.home-mascot:focus-visible {
+  border-color: #d97706;
+  box-shadow: 0 0 16px rgb(249 115 22 / 22%);
+  outline: none;
+}
+
+.mascot-flame {
+  position: relative;
+  display: grid;
+  width: 2.2rem;
+  height: 2.35rem;
+  place-items: center;
+  border: 2px solid #f97316;
+  border-radius: 48% 48% 42% 42%;
+  background: #b83a0a;
+  box-shadow: 0 0 10px rgb(249 115 22 / 20%), inset 0 -5px #7c2609;
+  animation: mascot-bob 3s ease-in-out infinite;
+  transition: filter 180ms ease, transform 180ms ease;
+}
+
+.mascot-flame::before {
+  position: absolute;
+  top: -0.43rem;
+  left: 50%;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid #f97316;
+  border-bottom: 0;
+  border-left: 0;
+  background: #f5a623;
+  content: "";
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.mascot-ear {
+  position: absolute;
+  top: 0.17rem;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid #facc15;
+  background: #f5a623;
+  transform: rotate(45deg);
+}
+
+.mascot-ear-left { left: -0.2rem; }
+.mascot-ear-right { right: -0.2rem; }
+
+.home-mascot.is-pleased .mascot-flame {
+  filter: brightness(1.2);
+  transform: translateY(-2px) scale(1.06);
+}
+
+.home-mascot.is-sparking .mascot-flame {
+  animation: mascot-hop 420ms ease-out;
 }
 
 .mascot-face {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: 0.65rem 0.65rem;
+  width: 100%;
+  grid-template-columns: 0.58rem 0.58rem;
   justify-items: center;
-  column-gap: 0.35rem;
+  column-gap: 0.24rem;
   row-gap: 0.1rem;
 }
 
 .mascot-eye {
   display: grid;
-  width: 0.62rem;
-  height: 0.62rem;
+  width: 0.58rem;
+  height: 0.58rem;
   place-items: center;
-  border: 1px solid #f97316;
-  border-radius: 50%;
+  border: 2px solid #facc15;
+  border-radius: 2px;
+  background: #ffcf55;
+  box-shadow: 0 0 5px rgb(255 207 85 / 55%);
+  transition: height 90ms ease;
 }
 
 .mascot-eye i {
   width: 0.2rem;
-  height: 0.2rem;
-  border-radius: 50%;
-  background: #facc15;
+  height: 0.25rem;
+  background: #512009;
   transform: translate(var(--look-x, 0), var(--look-y, 0));
 }
 
+.mascot-flame.is-blinking .mascot-eye { height: 2px; }
+.mascot-flame.is-blinking .mascot-eye i { display: none; }
+
 .mascot-mouth {
   grid-column: 1 / -1;
-  color: #f6efd0;
+  color: #fff0bd;
   font-size: 0.8rem;
   line-height: 0.8;
 }
 
-.mascot-body {
-  margin: 0;
-  color: #d9550d;
-  font: inherit;
-  line-height: 0.9;
+.mascot-logs {
+  display: flex;
+  width: 2.1rem;
+  height: 0.38rem;
+  gap: 2px;
+  align-items: end;
+}
+
+.mascot-logs i {
+  display: block;
+  height: 0.26rem;
+  flex: 1;
+  border: 1px solid #9a4515;
+  background: #6c3117;
+}
+
+.mascot-logs i:nth-child(2) {
+  height: 0.38rem;
+  background: #a34d16;
+}
+
+.mascot-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mascot-sparks i {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffd45c;
+  animation: mascot-spark 580ms ease-out forwards;
+}
+
+.mascot-sparks i:nth-child(1) { left: 8%; top: 35%; --spark-x: -13px; --spark-y: -12px; }
+.mascot-sparks i:nth-child(2) { right: 8%; top: 32%; --spark-x: 13px; --spark-y: -13px; }
+.mascot-sparks i:nth-child(3) { left: 20%; top: 8%; --spark-x: -9px; --spark-y: -18px; }
+.mascot-sparks i:nth-child(4) { right: 20%; top: 5%; --spark-x: 9px; --spark-y: -19px; }
+
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes mascot-hop {
+  0%, 100% { transform: translateY(-2px) scale(1.06); }
+  45% { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes mascot-spark {
+  to { opacity: 0; transform: translate(var(--spark-x), var(--spark-y)) scale(0.55); }
 }
 
 @media (max-width: 420px) {
   .home-mascot {
     right: 0.5rem;
     bottom: 0.5rem;
-    opacity: 0.78;
     transform: scale(0.88);
     transform-origin: bottom right;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-flame,
+  .mascot-sparks i { animation: none; }
 }
