@@ -101,32 +101,59 @@ alter table public.decks enable row level security;
 alter table public.cards enable row level security;
 alter table public.notes enable row level security;
 
-create policy "profiles: own row"
-  on public.profiles for all
-  using (id = auth.uid())
-  with check (id = auth.uid());
+-- Table grants let signed-in clients issue queries; RLS below limits which rows
+-- those queries can read or change.
+grant select, insert, update, delete on public.profiles, public.decks, public.cards, public.notes to authenticated;
 
-create policy "decks: own rows"
-  on public.decks for all
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
+-- Profiles: each signed-in user can only access their own profile row.
+create policy "profiles_select_own" on public.profiles
+  for select to authenticated using (id = (select auth.uid()));
+create policy "profiles_insert_own" on public.profiles
+  for insert to authenticated with check (id = (select auth.uid()));
+create policy "profiles_update_own" on public.profiles
+  for update to authenticated using (id = (select auth.uid()))
+  with check (id = (select auth.uid()));
+create policy "profiles_delete_own" on public.profiles
+  for delete to authenticated using (id = (select auth.uid()));
 
-create policy "cards: via own decks"
-  on public.cards for all
-  using (
-    exists (
-      select 1 from public.decks d
-      where d.id = cards.deck_id and d.user_id = auth.uid()
-    )
-  )
-  with check (
-    exists (
-      select 1 from public.decks d
-      where d.id = cards.deck_id and d.user_id = auth.uid()
-    )
+-- Decks: the owner id must match the authenticated user for every operation.
+create policy "decks_select_own" on public.decks
+  for select to authenticated using (user_id = (select auth.uid()));
+create policy "decks_insert_own" on public.decks
+  for insert to authenticated with check (user_id = (select auth.uid()));
+create policy "decks_update_own" on public.decks
+  for update to authenticated using (user_id = (select auth.uid()))
+  with check (user_id = (select auth.uid()));
+create policy "decks_delete_own" on public.decks
+  for delete to authenticated using (user_id = (select auth.uid()));
+
+-- Cards: all operations require ownership of the card's parent deck.
+create policy "cards_select_via_own_decks" on public.cards
+  for select to authenticated using (
+    exists (select 1 from public.decks d where d.id = cards.deck_id and d.user_id = (select auth.uid()))
+  );
+create policy "cards_insert_via_own_decks" on public.cards
+  for insert to authenticated with check (
+    exists (select 1 from public.decks d where d.id = cards.deck_id and d.user_id = (select auth.uid()))
+  );
+create policy "cards_update_via_own_decks" on public.cards
+  for update to authenticated using (
+    exists (select 1 from public.decks d where d.id = cards.deck_id and d.user_id = (select auth.uid()))
+  ) with check (
+    exists (select 1 from public.decks d where d.id = cards.deck_id and d.user_id = (select auth.uid()))
+  );
+create policy "cards_delete_via_own_decks" on public.cards
+  for delete to authenticated using (
+    exists (select 1 from public.decks d where d.id = cards.deck_id and d.user_id = (select auth.uid()))
   );
 
-create policy "notes: own row"
-  on public.notes for all
-  using (user_id = auth.uid())
-  with check (user_id = auth.uid());
+-- Notes: each user has one notes row, keyed by their auth id.
+create policy "notes_select_own" on public.notes
+  for select to authenticated using (user_id = (select auth.uid()));
+create policy "notes_insert_own" on public.notes
+  for insert to authenticated with check (user_id = (select auth.uid()));
+create policy "notes_update_own" on public.notes
+  for update to authenticated using (user_id = (select auth.uid()))
+  with check (user_id = (select auth.uid()));
+create policy "notes_delete_own" on public.notes
+  for delete to authenticated using (user_id = (select auth.uid()));

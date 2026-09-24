@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import HomeMascot from "@/components/HomeMascot";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
@@ -10,7 +11,7 @@ export default async function HomePage() {
   } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
 
   return (
-    <main className="mx-auto flex min-h-full w-full max-w-lg flex-col justify-center gap-6 px-6 py-16">
+    <main className="mx-auto flex min-h-full w-full max-w-lg flex-col justify-center gap-6 px-6 py-16 pb-28">
       <div className="w-fit rounded-lg bg-black p-2">
         <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={194} height={60} priority />
       </div>
@@ -24,6 +25,7 @@ export default async function HomePage() {
       >
         {user ? "Open decks" : "Sign in"}
       </Link>
+      <HomeMascot />
     </main>
   );
 }

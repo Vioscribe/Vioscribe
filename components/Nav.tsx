@@ -10,9 +10,9 @@ const links = [
 
 export default function Nav({ displayName }: { displayName: string }) {
   return (
-    <header className="border-b border-stone-200 bg-stone-100">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link href="/decks" aria-label="Vioscribe home" className="shrink-0 rounded-lg bg-black p-1.5">
+    <header className="border-b border-stone-200 bg-black">
+      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 py-3 pl-0 pr-4">
+        <Link href="/decks" aria-label="Vioscribe home" className="shrink-0">
           <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={162} height={50} priority />
         </Link>
         <nav className="flex items-center gap-3 text-sm sm:gap-4">

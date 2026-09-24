@@ -109,3 +109,75 @@ a:hover {
 .notes-editor .tiptap:focus {
   outline: none;
 }
+
+/* Small, decorative homepage companion; pointer events pass through it. */
+.home-mascot {
+  position: fixed;
+  right: 1rem;
+  bottom: 0.75rem;
+  z-index: 10;
+  display: flex;
+  width: 3.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  border: 1px solid #393027;
+  border-radius: 0.65rem;
+  background: rgb(12 10 8 / 82%);
+  padding: 0.35rem 0.3rem 0.2rem;
+  color: #facc15;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.65rem;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mascot-face {
+  display: grid;
+  grid-template-columns: 0.65rem 0.65rem;
+  justify-items: center;
+  column-gap: 0.35rem;
+  row-gap: 0.1rem;
+}
+
+.mascot-eye {
+  display: grid;
+  width: 0.62rem;
+  height: 0.62rem;
+  place-items: center;
+  border: 1px solid #f97316;
+  border-radius: 50%;
+}
+
+.mascot-eye i {
+  width: 0.2rem;
+  height: 0.2rem;
+  border-radius: 50%;
+  background: #facc15;
+  transform: translate(var(--look-x, 0), var(--look-y, 0));
+}
+
+.mascot-mouth {
+  grid-column: 1 / -1;
+  color: #f6efd0;
+  font-size: 0.8rem;
+  line-height: 0.8;
+}
+
+.mascot-body {
+  margin: 0;
+  color: #d9550d;
+  font: inherit;
+  line-height: 0.9;
+}
+
+@media (max-width: 420px) {
+  .home-mascot {
+    right: 0.5rem;
+    bottom: 0.5rem;
+    opacity: 0.78;
+    transform: scale(0.88);
+    transform-origin: bottom right;
+  }
+}
