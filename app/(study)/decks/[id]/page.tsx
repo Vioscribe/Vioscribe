@@ -62,7 +62,7 @@ export default async function DeckPage({
           />
           <button
             type="submit"
-            className="sm:col-span-2 w-fit rounded-lg bg-stone-900 px-4 py-2 text-sm font-medium text-white"
+            className="sm:col-span-2 w-fit rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white"
           >
             Add card
           </button>

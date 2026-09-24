@@ -1,20 +1,81 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf7f2;
-  --foreground: #1c1917;
+  color-scheme: dark;
+  --background: #0c0a08;
+  --foreground: #f6efd0;
+  --ember: #f97316;
+  --flame: #facc15;
+  --panel: #17130f;
+  --line: #393027;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-plex-mono);
+  --font-mono: var(--font-plex-mono);
+  --color-stone-50: #100d0a;
+  --color-stone-100: #17130f;
+  --color-stone-200: #2b241d;
+  --color-stone-300: #453a2e;
+  --color-stone-400: #9b8a72;
+  --color-stone-500: #b5a487;
+  --color-stone-600: #d0bea0;
+  --color-stone-800: #f3e7bf;
+  --color-stone-900: #f6efd0;
+  --color-teal-800: #d9550d;
+  --color-teal-900: #f97316;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+input:not([type="hidden"]),
+textarea {
+  border-radius: 0.55rem;
+  border-color: var(--line);
+  background-color: #100d0a;
+  color: var(--foreground);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #8b7b65;
+}
+
+input:focus,
+textarea:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--flame);
+  outline-offset: 2px;
+}
+
+.bg-white {
+  background-color: var(--panel);
+}
+
+.bg-teal-800,
+.bg-teal-900 {
+  color: #100d0a;
+}
+
+a:hover {
+  color: var(--flame);
 }
 
 /* TipTap notes editor */
@@ -43,4 +104,8 @@ body {
 
 .notes-editor .tiptap p {
   margin: 0.35rem 0;
+}
+
+.notes-editor .tiptap:focus {
+  outline: none;
 }

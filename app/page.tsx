@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
@@ -10,7 +11,9 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto flex min-h-full w-full max-w-lg flex-col justify-center gap-6 px-6 py-16">
-      <p className="text-sm font-medium tracking-wide text-teal-800">Vioscribe</p>
+      <div className="w-fit rounded-lg bg-black p-2">
+        <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={194} height={60} priority />
+      </div>
       <h1 className="text-3xl font-semibold tracking-tight">Study in small slices.</h1>
       <p className="text-stone-600">
         Flashcards, a flip-card review, notes, and a daily streak. Sign in to start.

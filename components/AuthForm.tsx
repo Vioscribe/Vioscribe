@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AuthForm() {
@@ -63,7 +64,9 @@ export default function AuthForm() {
   return (
     <div className="mx-auto w-full max-w-sm space-y-6">
       <div>
-        <p className="text-sm font-medium text-teal-800">Vioscribe</p>
+        <div className="mb-6 w-fit rounded-lg bg-black p-2">
+          <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={194} height={60} priority />
+        </div>
         <h1 className="mt-1 text-2xl font-semibold">
           {mode === "login" ? "Log in" : "Create an account"}
         </h1>
