@@ -1,8 +1,8 @@
 import type { Profile } from "@/lib/types";
 
 function yesterdayOf(isoDate: string) {
-  const d = new Date(`${isoDate}T12:00:00`);
-  d.setDate(d.getDate() - 1);
+  const d = new Date(`${isoDate}T00:00:00.000Z`);
+  d.setUTCDate(d.getUTCDate() - 1);
   return d.toISOString().slice(0, 10);
 }
 

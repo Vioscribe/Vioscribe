@@ -11,6 +11,8 @@ function localToday() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+type QueuedCard = { card: Card; retry: boolean };
+
 export default function ReviewSession({
   deckId,
   deckTitle,
@@ -21,15 +23,18 @@ export default function ReviewSession({
   initialCards: Card[];
 }) {
   // Queue: missed cards are pushed to the end so they show up again sooner.
-  const [queue, setQueue] = useState(initialCards);
+  const [queue, setQueue] = useState<QueuedCard[]>(() =>
+    initialCards.map((card) => ({ card, retry: false })),
+  );
   const [flipped, setFlipped] = useState(false);
   const [pending, startTransition] = useTransition();
-  const current = queue[0];
+  const current = queue[0]?.card;
   const today = useMemo(() => localToday(), []);
 
   function grade(result: "got_it" | "not_yet") {
     if (!current) return;
     const card = current;
+    const isRetry = queue[0].retry;
     startTransition(async () => {
       const form = new FormData();
       form.set("card_id", card.id);
@@ -40,7 +45,9 @@ export default function ReviewSession({
       setFlipped(false);
       setQueue((q) => {
         const rest = q.slice(1);
-        if (result === "not_yet") return [...rest, card];
+        // Give a missed card one quick retry after the first pass. A second
+        // miss is still due soon in the database, but won't trap this session.
+        if (result === "not_yet" && !isRetry) rest.push({ card, retry: true });
         return rest;
       });
     });

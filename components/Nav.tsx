@@ -6,6 +6,7 @@ const links = [
   { href: "/decks", label: "Decks" },
   { href: "/notes", label: "Notes" },
   { href: "/streak", label: "Streak" },
+  { href: "/friends", label: "Friends" },
 ];
 
 export default function Nav({ displayName }: { displayName: string }) {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { deleteCard, saveCard } from "@/app/actions";
 import { createClient } from "@/lib/supabase/server";
+import DeckSharing from "@/components/DeckSharing";
 
 export default async function DeckPage({
   params,
@@ -13,7 +14,7 @@ export default async function DeckPage({
 
   const { data: deck } = await supabase
     .from("decks")
-    .select("id, title")
+    .select("id, title, is_shareable, share_slug")
     .eq("id", id)
     .single();
 
@@ -68,6 +69,12 @@ export default async function DeckPage({
           </button>
         </form>
       </section>
+
+      <DeckSharing
+        deckId={deck.id}
+        shareable={deck.is_shareable}
+        shareSlug={deck.share_slug}
+      />
 
       <ul className="space-y-4">
         {(cards || []).length === 0 && (

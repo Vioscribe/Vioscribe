@@ -28,9 +28,13 @@ export default function NotesEditor({ initialContent }: { initialContent: string
 
   useEffect(() => {
     return () => {
-      if (timer.current) clearTimeout(timer.current);
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+        if (editor) void saveNotes(editor.getHTML());
+      }
     };
-  }, []);
+  }, [editor]);
 
   if (!editor) return <p className="text-sm text-stone-400">Loading editor…</p>;
 

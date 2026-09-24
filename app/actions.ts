@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { applyDayRollover, applyReview } from "@/lib/streak";
@@ -42,6 +43,78 @@ export async function deleteDeck(formData: FormData) {
   const supabase = await createClient();
   await supabase.from("decks").delete().eq("id", id);
   redirect("/decks");
+}
+
+export async function setDeckShareable(formData: FormData) {
+  const id = String(formData.get("deck_id") || "");
+  const shareable = String(formData.get("shareable") || "") === "true";
+  if (!id) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("decks")
+    .update({
+      is_shareable: shareable,
+      share_slug: shareable ? randomUUID() : null,
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  redirect(`/decks/${id}`);
+}
+
+export async function copySharedDeck(formData: FormData) {
+  const slug = String(formData.get("share_slug") || "");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: deckId, error } = await supabase.rpc("copy_shared_deck", {
+    source_slug: slug,
+  });
+  if (error || !deckId) throw new Error(error?.message || "Could not copy shared deck");
+  redirect(`/decks/${deckId}`);
+}
+
+export async function addFriendByCode(formData: FormData) {
+  const code = String(formData.get("friend_code") || "").trim();
+  if (!code) redirect("/friends?error=Enter%20a%20friend%20code");
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.rpc("add_friend_by_code", { target_code: code });
+  if (error) redirect(`/friends?error=${encodeURIComponent(error.message)}`);
+  redirect("/friends?sent=1");
+}
+
+export async function respondToFriendRequest(formData: FormData) {
+  const requestId = String(formData.get("request_id") || "");
+  const accept = String(formData.get("accept") || "") === "true";
+  if (!requestId) redirect("/friends?error=Friend%20request%20not%20found");
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.rpc("respond_to_friend_request", {
+    request_id: requestId,
+    accept_request: accept,
+  });
+  if (error) redirect(`/friends?error=${encodeURIComponent(error.message)}`);
+  redirect("/friends?updated=1");
 }
 
 export async function saveCard(formData: FormData) {
@@ -99,6 +172,11 @@ export async function reviewCard(formData: FormData) {
     .update({ interval_minutes: interval, next_review_at: nextReview })
     .eq("id", cardId);
 
+  const { error: reviewLogError } = await supabase
+    .from("study_reviews")
+    .insert({ user_id: user.id, card_id: card.id });
+  if (reviewLogError) throw new Error(reviewLogError.message);
+
   const { data: profile } = await supabase
     .from("profiles")
     .select(
@@ -154,6 +232,10 @@ export async function saveDailyGoal(formData: FormData) {
   if (!profile) return;
 
   const rolled = applyDayRollover({ ...(profile as Profile), daily_goal: goal }, today);
+  if (rolled.reviews_today >= goal && rolled.last_goal_date !== today) {
+    rolled.current_streak += 1;
+    rolled.last_goal_date = today;
+  }
   await supabase
     .from("profiles")
     .update({
@@ -161,6 +243,7 @@ export async function saveDailyGoal(formData: FormData) {
       reviews_today: rolled.reviews_today,
       reviews_date: rolled.reviews_date,
       current_streak: rolled.current_streak,
+      last_goal_date: rolled.last_goal_date,
     })
     .eq("id", user.id);
 }
