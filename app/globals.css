@@ -147,48 +147,49 @@ a:hover {
 .mascot-flame {
   position: relative;
   display: grid;
-  width: 2.2rem;
+  width: 2.35rem;
   height: 2.35rem;
   place-items: center;
-  border: 2px solid #f97316;
-  border-radius: 48% 48% 42% 42%;
-  background: #b83a0a;
-  box-shadow: 0 0 10px rgb(249 115 22 / 20%), inset 0 -5px #7c2609;
+  background: linear-gradient(90deg, #a92f09 0 13%, #df4b0c 13% 87%, #9b2a08 87%);
+  clip-path: polygon(
+    40% 0, 40% 12%, 30% 12%, 30% 24%, 20% 24%, 20% 40%, 10% 40%,
+    10% 72%, 20% 72%, 20% 88%, 80% 88%, 80% 72%, 90% 72%, 90% 40%,
+    80% 40%, 80% 24%, 70% 24%, 70% 12%, 60% 12%, 60% 0
+  );
+  filter: drop-shadow(0 0 5px rgb(249 115 22 / 35%));
   animation: mascot-bob 3s ease-in-out infinite;
   transition: filter 180ms ease, transform 180ms ease;
 }
 
 .mascot-flame::before {
   position: absolute;
-  top: -0.43rem;
+  top: 0.2rem;
   left: 50%;
-  width: 0.85rem;
-  height: 0.85rem;
-  border: 2px solid #f97316;
-  border-bottom: 0;
-  border-left: 0;
-  background: #f5a623;
+  width: 1.05rem;
+  height: 1.25rem;
+  background: linear-gradient(90deg, #f28a16 0 32%, #ffd95b 32% 78%, #ffc334 78%);
+  clip-path: polygon(40% 0, 60% 0, 60% 20%, 80% 20%, 80% 48%, 100% 48%, 100% 76%, 80% 76%, 80% 100%, 20% 100%, 20% 76%, 0 76%, 0 48%, 20% 48%, 20% 20%, 40% 20%);
   content: "";
-  transform: translateX(-50%) rotate(-45deg);
+  transform: translateX(-50%);
 }
-
-.mascot-ear {
-  position: absolute;
-  top: 0.17rem;
-  width: 0.48rem;
-  height: 0.48rem;
-  border: 1px solid #facc15;
-  background: #f5a623;
-  transform: rotate(45deg);
-}
-
-.mascot-ear-left { left: -0.2rem; }
-.mascot-ear-right { right: -0.2rem; }
 
 .home-mascot.is-pleased .mascot-flame {
   filter: brightness(1.2);
   transform: translateY(-2px) scale(1.06);
 }
+
+.home-mascot.is-annoyed .mascot-eye {
+  border-color: #ff7a26;
+  background: #ff8b38;
+  box-shadow: 0 0 6px rgb(255 77 20 / 65%);
+}
+
+.home-mascot.is-annoyed .mascot-mouth {
+  color: #ffae52;
+  transform: rotate(180deg);
+}
+
+.home-mascot.is-exploding { visibility: hidden; }
 
 .home-mascot.is-sparking .mascot-flame {
   animation: mascot-hop 420ms ease-out;
@@ -274,6 +275,23 @@ a:hover {
 .mascot-sparks i:nth-child(3) { left: 20%; top: 8%; --spark-x: -9px; --spark-y: -18px; }
 .mascot-sparks i:nth-child(4) { right: 20%; top: 5%; --spark-x: 9px; --spark-y: -19px; }
 
+.mascot-pixel-field {
+  position: fixed;
+  z-index: 11;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mascot-pixel {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  image-rendering: pixelated;
+  animation:
+    mascot-pixel-scatter 1500ms cubic-bezier(0.2, 0.65, 0.45, 1) forwards,
+    mascot-pixel-reform 900ms cubic-bezier(0.45, 0, 0.8, 0.3) 1600ms forwards;
+}
+
 @keyframes mascot-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
@@ -288,6 +306,17 @@ a:hover {
   to { opacity: 0; transform: translate(var(--spark-x), var(--spark-y)) scale(0.55); }
 }
 
+@keyframes mascot-pixel-scatter {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0); }
+  35% { transform: translate(var(--pixel-mid-x), var(--pixel-arc)) rotate(150deg); }
+  100% { opacity: 0.95; transform: translate(var(--pixel-dx), var(--pixel-dy)) rotate(520deg); }
+}
+
+@keyframes mascot-pixel-reform {
+  from { opacity: 0.95; transform: translate(var(--pixel-dx), var(--pixel-dy)) rotate(520deg); }
+  to { opacity: 0; transform: translate(0, 0) rotate(720deg); }
+}
+
 @media (max-width: 420px) {
   .home-mascot {
     right: 0.5rem;
@@ -300,4 +329,5 @@ a:hover {
 @media (prefers-reduced-motion: reduce) {
   .mascot-flame,
   .mascot-sparks i { animation: none; }
+  .mascot-pixel { animation-duration: 1ms, 1ms; animation-delay: 0ms, 0ms; }
 }

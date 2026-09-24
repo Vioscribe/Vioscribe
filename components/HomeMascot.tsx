@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+
+type EmberPixel = { x: number; y: number; dx: number; dy: number; midX: string; arc: string; color: string };
 
 export default function HomeMascot() {
   const mascotRef = useRef<HTMLButtonElement>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const explosionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clickCount = useRef(0);
   const [blinking, setBlinking] = useState(false);
   const [pleased, setPleased] = useState(false);
+  const [annoyed, setAnnoyed] = useState(false);
   const [spark, setSpark] = useState(false);
+  const [exploding, setExploding] = useState(false);
+  const [pixels, setPixels] = useState<EmberPixel[]>([]);
 
   useEffect(() => {
     const mascot = mascotRef.current;
@@ -50,10 +57,68 @@ export default function HomeMascot() {
       if (blinkEnd) clearTimeout(blinkEnd);
       if (hoverTimer.current) clearTimeout(hoverTimer.current);
       if (reactionTimer.current) clearTimeout(reactionTimer.current);
+      if (explosionTimer.current) clearTimeout(explosionTimer.current);
     };
   }, []);
 
   function react() {
+    if (exploding) return;
+    clickCount.current += 1;
+
+    if (clickCount.current >= 20) {
+      const bounds = mascotRef.current?.getBoundingClientRect();
+      if (!bounds) return;
+
+      // Scatter little square bits from a compact flame-and-logs pixel shape.
+      const colors = ["#ffdf68", "#f9a825", "#f97316", "#d9480f", "#7c310e"];
+      const shape = [
+        "...##...",
+        "..####..",
+        ".######.",
+        ".######.",
+        "########",
+        "########",
+        "########",
+        ".######.",
+        "########",
+        "########",
+      ];
+      const originX = bounds.left + bounds.width / 2;
+      const originY = bounds.top + bounds.height / 2;
+      const cellWidth = bounds.width / 8;
+      const cellHeight = bounds.height / shape.length;
+      const nextPixels: EmberPixel[] = [];
+
+      shape.forEach((row, rowIndex) => {
+        [...row].forEach((cell, columnIndex) => {
+          if (cell !== "#") return;
+          const targetX = Math.random() * window.innerWidth;
+          const targetY = window.innerHeight * (0.72 + Math.random() * 0.25);
+          nextPixels.push({
+            x: bounds.left + columnIndex * cellWidth,
+            y: bounds.top + rowIndex * cellHeight,
+            dx: targetX - originX,
+            dy: targetY - originY,
+            midX: `${(targetX - originX) * 0.48}px`,
+            arc: `${Math.min(-24, (targetY - originY) * 0.22 - 44)}px`,
+            color: colors[Math.min(colors.length - 1, Math.floor(rowIndex / 2))],
+          });
+        });
+      });
+
+      clickCount.current = 0;
+      setPixels(nextPixels);
+      setExploding(true);
+      setPleased(false);
+      setAnnoyed(false);
+      explosionTimer.current = setTimeout(() => {
+        setPixels([]);
+        setExploding(false);
+      }, 2700);
+      return;
+    }
+
+    setAnnoyed(clickCount.current >= 12);
     setSpark(true);
     setPleased(true);
     if (reactionTimer.current) clearTimeout(reactionTimer.current);
@@ -64,31 +129,48 @@ export default function HomeMascot() {
   }
 
   return (
-    <button
-      ref={mascotRef}
-      type="button"
-      className={`home-mascot${pleased ? " is-pleased" : ""}${spark ? " is-sparking" : ""}`}
-      aria-label="Wave to the little ember"
-      onPointerEnter={() => {
-        hoverTimer.current = setTimeout(() => setPleased(true), 450);
-      }}
-      onPointerLeave={() => {
-        if (hoverTimer.current) clearTimeout(hoverTimer.current);
-        setPleased(false);
-      }}
-      onClick={react}
-    >
-      <span className={`mascot-flame${blinking ? " is-blinking" : ""}`}>
-        <span className="mascot-ear mascot-ear-left" />
-        <span className="mascot-ear mascot-ear-right" />
-        <span className="mascot-face">
-          <span className="mascot-eye"><i /></span>
-          <span className="mascot-eye"><i /></span>
-          <span className="mascot-mouth">~</span>
+    <>
+      {exploding && (
+        <span className="mascot-pixel-field" aria-hidden="true">
+          {pixels.map((pixel, index) => {
+            const style = {
+              left: pixel.x,
+              top: pixel.y,
+              backgroundColor: pixel.color,
+              "--pixel-dx": `${pixel.dx}px`,
+              "--pixel-dy": `${pixel.dy}px`,
+              "--pixel-mid-x": pixel.midX,
+              "--pixel-arc": pixel.arc,
+            } as CSSProperties;
+            return <i key={index} className="mascot-pixel" style={style} />;
+          })}
         </span>
-      </span>
-      <span className="mascot-logs"><i /><i /><i /></span>
-      {spark && <span className="mascot-sparks" aria-hidden="true"><i /><i /><i /><i /></span>}
-    </button>
+      )}
+      <button
+        ref={mascotRef}
+        type="button"
+        disabled={exploding}
+        className={`home-mascot${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
+        aria-label="Wave to the little ember"
+        onPointerEnter={() => {
+          hoverTimer.current = setTimeout(() => setPleased(true), 450);
+        }}
+        onPointerLeave={() => {
+          if (hoverTimer.current) clearTimeout(hoverTimer.current);
+          setPleased(false);
+        }}
+        onClick={react}
+      >
+        <span className={`mascot-flame${blinking ? " is-blinking" : ""}`}>
+          <span className="mascot-face">
+            <span className="mascot-eye"><i /></span>
+            <span className="mascot-eye"><i /></span>
+            <span className="mascot-mouth">~</span>
+          </span>
+        </span>
+        <span className="mascot-logs"><i /><i /><i /></span>
+        {spark && <span className="mascot-sparks" aria-hidden="true"><i /><i /><i /><i /></span>}
+      </button>
+    </>
   );
 }
