@@ -802,8 +802,8 @@ grant execute on function public.weekly_friends_leaderboard() to authenticated;
 do $$
 begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
-    if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'rooms') then
-      execute 'alter publication supabase_realtime add table public.rooms';
+    if exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'rooms') then
+      execute 'alter publication supabase_realtime drop table public.rooms';
     end if;
     if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'personal_timers') then
       execute 'alter publication supabase_realtime add table public.personal_timers';

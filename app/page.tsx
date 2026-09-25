@@ -54,6 +54,7 @@ export default async function HomePage() {
           <span>streaks <i>{"// keep a rhythm"}</i></span>
           <span>friends + rooms <i>{"// study together"}</i></span>
         </section>
+        <p className="landing-footer-hint">↓ Scroll down for Privacy, Terms, and contact</p>
       </div>
       <HomeMascot />
     </main>

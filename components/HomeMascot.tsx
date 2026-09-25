@@ -21,6 +21,7 @@ export default function HomeMascot() {
   const [blinking, setBlinking] = useState(false);
   const [pleased, setPleased] = useState(false);
   const [annoyed, setAnnoyed] = useState(false);
+  const [idleMessage, setIdleMessage] = useState(false);
   const [spark, setSpark] = useState(false);
   const [sparkParticles, setSparkParticles] = useState<ClickSpark[]>([]);
   const [tapSequence, setTapSequence] = useState(0);
@@ -223,6 +224,18 @@ export default function HomeMascot() {
     return () => cancelAnimationFrame(frame);
   }, [exploding, pixels]);
 
+  useEffect(() => {
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    const idleTimer = setTimeout(() => {
+      setIdleMessage(true);
+      hideTimer = setTimeout(() => setIdleMessage(false), 4200);
+    }, 16000);
+    return () => {
+      clearTimeout(idleTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, [tapSequence]);
+
   return (
     <>
       {exploding && (
@@ -240,19 +253,25 @@ export default function HomeMascot() {
         className={`home-mascot mood-${mood} tap-${tapSequence % 2 ? "odd" : "even"}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
         aria-label="Wave to the little ember"
         onPointerEnter={() => {
+          setIdleMessage(false);
           hoverTimer.current = setTimeout(() => setPleased(true), 450);
         }}
         onPointerLeave={() => {
           if (hoverTimer.current) clearTimeout(hoverTimer.current);
           setPleased(false);
         }}
-        onClick={react}
+        onClick={() => {
+          setIdleMessage(false);
+          react();
+        }}
       >
-        {mood >= 2 && !exploding && (
+        {idleMessage && mood < 2 && !exploding ? (
+          <span className="mascot-dialogue" aria-hidden="true">Still glowing…</span>
+        ) : mood >= 2 && !exploding ? (
           <span className="mascot-dialogue" aria-hidden="true">
             {mood >= 3 ? "ENOUGH!" : "STOP!"}
           </span>
-        )}
+        ) : null}
         <span className="mascot-ambient-sparks" aria-hidden="true">
           <i /><i /><i /><i /><i /><i />
         </span>
