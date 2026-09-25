@@ -14,6 +14,8 @@ export default function HomeMascot() {
   const [pleased, setPleased] = useState(false);
   const [annoyed, setAnnoyed] = useState(false);
   const [spark, setSpark] = useState(false);
+  const [tapSequence, setTapSequence] = useState(0);
+  const [mood, setMood] = useState(0);
   const [exploding, setExploding] = useState(false);
   const [pixels, setPixels] = useState<EmberPixel[]>([]);
 
@@ -64,6 +66,7 @@ export default function HomeMascot() {
   function react() {
     if (exploding) return;
     clickCount.current += 1;
+    setTapSequence((sequence) => sequence + 1);
 
     if (clickCount.current >= 20) {
       const bounds = mascotRef.current?.getBoundingClientRect();
@@ -83,8 +86,6 @@ export default function HomeMascot() {
         "########",
         "########",
       ];
-      const originX = bounds.left + bounds.width / 2;
-      const originY = bounds.top + bounds.height / 2;
       const cellWidth = bounds.width / 8;
       const cellHeight = bounds.height / shape.length;
       const nextPixels: EmberPixel[] = [];
@@ -93,14 +94,19 @@ export default function HomeMascot() {
         [...row].forEach((cell, columnIndex) => {
           if (cell !== "#") return;
           const targetX = Math.random() * window.innerWidth;
-          const targetY = window.innerHeight * (0.72 + Math.random() * 0.25);
+          // Let every pixel land close to the bottom edge before it reforms.
+          const targetY = Math.max(0, window.innerHeight - 7);
+          const x = bounds.left + columnIndex * cellWidth;
+          const y = bounds.top + rowIndex * cellHeight;
+          const dx = targetX - x;
+          const dy = targetY - y;
           nextPixels.push({
-            x: bounds.left + columnIndex * cellWidth,
-            y: bounds.top + rowIndex * cellHeight,
-            dx: targetX - originX,
-            dy: targetY - originY,
-            midX: `${(targetX - originX) * 0.48}px`,
-            arc: `${Math.min(-24, (targetY - originY) * 0.22 - 44)}px`,
+            x,
+            y,
+            dx,
+            dy,
+            midX: `${dx * 0.48}px`,
+            arc: `${Math.min(-24, dy * 0.22 - 44)}px`,
             color: colors[Math.min(colors.length - 1, Math.floor(rowIndex / 2))],
           });
         });
@@ -111,14 +117,17 @@ export default function HomeMascot() {
       setExploding(true);
       setPleased(false);
       setAnnoyed(false);
+      setMood(0);
       explosionTimer.current = setTimeout(() => {
         setPixels([]);
         setExploding(false);
-      }, 2700);
+      }, 3450);
       return;
     }
 
-    setAnnoyed(clickCount.current >= 12);
+    const nextMood = Math.floor(clickCount.current / 5);
+    setMood(nextMood);
+    setAnnoyed(nextMood >= 3);
     setSpark(true);
     setPleased(true);
     if (reactionTimer.current) clearTimeout(reactionTimer.current);
@@ -150,7 +159,7 @@ export default function HomeMascot() {
         ref={mascotRef}
         type="button"
         disabled={exploding}
-        className={`home-mascot${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
+        className={`home-mascot mood-${mood}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
         aria-label="Wave to the little ember"
         onPointerEnter={() => {
           hoverTimer.current = setTimeout(() => setPleased(true), 450);
@@ -169,7 +178,7 @@ export default function HomeMascot() {
           </span>
         </span>
         <span className="mascot-logs"><i /><i /><i /></span>
-        {spark && <span className="mascot-sparks" aria-hidden="true"><i /><i /><i /><i /></span>}
+        {spark && <span key={tapSequence} className="mascot-sparks" aria-hidden="true"><i /><i /><i /><i /></span>}
       </button>
     </>
   );

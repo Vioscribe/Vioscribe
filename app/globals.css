@@ -189,6 +189,15 @@ a:hover {
   transform: rotate(180deg);
 }
 
+.home-mascot.mood-1 .mascot-eye {
+  box-shadow: 0 0 9px rgb(255 223 104 / 85%);
+}
+
+.home-mascot.mood-2 .mascot-flame::before {
+  filter: brightness(1.25);
+  transform: translateX(-50%) scale(1.12);
+}
+
 .home-mascot.is-exploding { visibility: hidden; }
 
 .home-mascot.is-sparking .mascot-flame {
@@ -199,8 +208,9 @@ a:hover {
   position: relative;
   z-index: 1;
   display: grid;
-  width: 100%;
-  grid-template-columns: 0.58rem 0.58rem;
+  width: max-content;
+  grid-template-columns: repeat(2, 0.58rem);
+  justify-content: center;
   justify-items: center;
   column-gap: 0.24rem;
   row-gap: 0.1rem;
@@ -216,6 +226,7 @@ a:hover {
   background: #ffcf55;
   box-shadow: 0 0 5px rgb(255 207 85 / 55%);
   transition: height 90ms ease;
+  overflow: hidden;
 }
 
 .mascot-eye i {
@@ -289,7 +300,11 @@ a:hover {
   image-rendering: pixelated;
   animation:
     mascot-pixel-scatter 1500ms cubic-bezier(0.2, 0.65, 0.45, 1) forwards,
-    mascot-pixel-reform 900ms cubic-bezier(0.45, 0, 0.8, 0.3) 1600ms forwards;
+    mascot-pixel-reform 900ms cubic-bezier(0.45, 0, 0.8, 0.3) 2400ms forwards;
+}
+
+.mascot-sparks i {
+  animation-duration: 360ms;
 }
 
 @keyframes mascot-bob {
@@ -329,5 +344,5 @@ a:hover {
 @media (prefers-reduced-motion: reduce) {
   .mascot-flame,
   .mascot-sparks i { animation: none; }
-  .mascot-pixel { animation-duration: 1ms, 1ms; animation-delay: 0ms, 0ms; }
+  .mascot-pixel { animation-duration: 1ms, 1ms; animation-delay: 0ms, 2400ms; }
 }
