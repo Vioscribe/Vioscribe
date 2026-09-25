@@ -37,6 +37,7 @@ export default function LandingBrand() {
   function skipIntro() {
     if (timer.current) clearTimeout(timer.current);
     brandRef.current?.classList.remove("is-igniting");
+    window.dispatchEvent(new Event("vioscribe:skip-intro"));
     try {
       window.localStorage.setItem("hasSeenIntro", "true");
     } catch {

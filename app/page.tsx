@@ -1,7 +1,7 @@
 import Link from "next/link";
 import HomeMascot from "@/components/HomeMascot";
 import LandingBrand from "@/components/LandingBrand";
-import SloganHighlight from "@/components/SloganHighlight";
+import LandingSlogan from "@/components/LandingSlogan";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
@@ -21,7 +21,7 @@ export default async function HomePage() {
 
         <section className="landing-hero">
           <p className="landing-eyebrow">A BETTER WAY TO STUDY</p>
-          <h1>Pace your studies, protect your mind — <SloganHighlight /></h1>
+          <LandingSlogan />
           <p className="landing-summary">
             Make a deck, add what you need to remember, then review at a pace that sticks.
           </p>

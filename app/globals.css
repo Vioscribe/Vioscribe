@@ -467,19 +467,36 @@ a:hover {
 .landing-hero h1 {
   margin: 0;
   color: #fff0bd;
+  font-family: var(--font-plex-mono), monospace;
   font-size: clamp(2.2rem, 5vw, 3.55rem);
   font-weight: 700;
   letter-spacing: -0.075em;
   line-height: 1.1;
 }
 
-.landing-hero h1 span {
+.landing-hero h1 .landing-slogan-highlight {
   color: #ffd45c;
 }
 
 .landing-slogan-highlight {
   border-radius: 2px;
+  color: #ffd45c;
+  font-family: var(--font-plex-mono), monospace;
   transition: text-shadow 180ms ease;
+}
+
+.landing-type-caret {
+  display: inline-block;
+  width: 0.075em;
+  height: 0.82em;
+  margin-left: 0.04em;
+  background: #ffd45c;
+  vertical-align: -0.04em;
+  animation: landing-caret-blink 720ms steps(2, start) infinite;
+}
+
+@keyframes landing-caret-blink {
+  to { visibility: hidden; }
 }
 
 .landing-slogan-highlight:hover {
