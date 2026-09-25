@@ -20,7 +20,20 @@ export default async function HomePage() {
 
         <section className="landing-hero">
           <p className="landing-eyebrow">A SMALLER WAY TO STUDY</p>
-          <h1>Keep the spark. <span className="landing-slogan-highlight">Don’t burn out.</span></h1>
+          <h1>
+            Keep the spark. <span
+              className="landing-slogan-highlight"
+              onPointerMove={(event) => {
+                const bounds = event.currentTarget.getBoundingClientRect();
+                const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+                const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+                event.currentTarget.style.setProperty("--shimmer-x", `${x}%`);
+                event.currentTarget.style.setProperty("--shimmer-y", `${y}%`);
+              }}
+            >
+              Don’t burn out.
+            </span>
+          </h1>
           <p className="landing-summary">
             Make a deck, add what you need to remember, then review at a pace that sticks.
           </p>

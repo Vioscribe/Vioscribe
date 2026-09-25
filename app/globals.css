@@ -236,13 +236,13 @@ a:hover {
 }
 
 .landing-slogan-highlight:hover {
-  background: linear-gradient(105deg, #ffd45c 0%, #fff1bb 43%, #fff9df 50%, #ffd45c 58%, #ffd45c 100%);
-  background-size: 230% 100%;
-  background-position: 100% 0;
+  background: radial-gradient(
+    ellipse 58px 30px at var(--shimmer-x, 50%) var(--shimmer-y, 50%),
+    #fff6cf 0%, #ffe38c 34%, #ffd45c 78%
+  );
   background-clip: text;
   color: transparent;
   text-shadow: 0 0 10px rgb(255 190 58 / 14%);
-  animation: slogan-shimmer 950ms ease-out forwards;
 }
 
 .landing-summary {
@@ -369,10 +369,6 @@ a:hover {
   0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
   18% { opacity: 1; }
   100% { opacity: 0; transform: translate(var(--ember-x, 0), -28px) scale(0.7); }
-}
-
-@keyframes slogan-shimmer {
-  to { background-position: -130% 0; }
 }
 
 @media (max-width: 640px) {
