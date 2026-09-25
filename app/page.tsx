@@ -21,7 +21,7 @@ export default async function HomePage() {
 
         <section className="landing-hero">
           <p className="landing-eyebrow">A BETTER WAY TO STUDY</p>
-          <h1>Pace your studies, protect your mind—<SloganHighlight /></h1>
+          <h1>Pace your studies, protect your mind — <SloganHighlight /></h1>
           <p className="landing-summary">
             Make a deck, add what you need to remember, then review at a pace that sticks.
           </p>
