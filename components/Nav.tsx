@@ -5,6 +5,7 @@ import { signOut } from "@/app/actions";
 const links = [
   { href: "/decks", label: "Decks" },
   { href: "/notes", label: "Notes" },
+  { href: "/files", label: "Filing Room" },
   { href: "/streak", label: "Streak" },
   { href: "/friends", label: "Friends" },
   { href: "/rooms", label: "Rooms" },

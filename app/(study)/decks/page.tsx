@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createDeck, deleteDeck } from "@/app/actions";
+import FileItemMoveForm from "@/components/FileItemMoveForm";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DecksPage() {
@@ -8,6 +9,12 @@ export default async function DecksPage() {
     .from("decks")
     .select("id, title, created_at")
     .order("created_at", { ascending: false });
+  const [{ data: files }, { data: deckFileRefs }] = await Promise.all([
+    supabase.from("files").select("id, title").order("title"),
+    supabase.from("decks").select("id, file_id"),
+  ]);
+  const fileTitles = new Map((files ?? []).map((file) => [file.id, file.title]));
+  const deckFileIds = new Map((deckFileRefs ?? []).map((row) => [row.id, row.file_id]));
 
   return (
     <div className="space-y-8">
@@ -43,12 +50,18 @@ export default async function DecksPage() {
             <Link href={`/decks/${deck.id}`} className="font-medium hover:underline">
               {deck.title}
             </Link>
-            <form action={deleteDeck}>
-              <input type="hidden" name="id" value={deck.id} />
-              <button type="submit" className="text-sm text-stone-400 hover:text-red-700">
-                Delete
-              </button>
-            </form>
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              <div className="text-right">
+                <p className="text-xs text-stone-500">{deckFileIds.get(deck.id) ? `Filed in ${fileTitles.get(deckFileIds.get(deck.id)!) ?? "a file"}` : "Unfiled"}</p>
+                {deckFileRefs && files && <FileItemMoveForm item={{ ...deck, file_id: deckFileIds.get(deck.id) ?? null }} kind="deck" files={files} returnTo="/decks" />}
+              </div>
+              <form action={deleteDeck}>
+                <input type="hidden" name="id" value={deck.id} />
+                <button type="submit" className="text-sm text-stone-400 hover:text-red-700">
+                  Delete
+                </button>
+              </form>
+            </div>
           </li>
         ))}
       </ul>
