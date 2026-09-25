@@ -14,7 +14,11 @@ create table public.profiles (
   reviews_today int not null default 0,
   reviews_date date,
   current_streak int not null default 0,
+  longest_streak int not null default 0 check (longest_streak >= 0),
   last_goal_date date,
+  is_developer boolean not null default false,
+  classroom_badge_color text not null default '#f97316'
+    check (classroom_badge_color ~ '^#[0-9A-Fa-f]{6}$'),
   created_at timestamptz not null default now()
 );
 
@@ -161,6 +165,7 @@ alter table public.study_reviews enable row level security;
 grant select on public.profiles to authenticated;
 grant update (daily_goal, reviews_today, reviews_date, current_streak, last_goal_date)
   on public.profiles to authenticated;
+grant update (classroom_badge_color) on public.profiles to authenticated;
 grant select, insert, update, delete on public.decks, public.cards, public.notes to authenticated;
 grant select on public.friend_requests to authenticated;
 grant select, insert on public.study_reviews to authenticated;
@@ -171,6 +176,21 @@ create policy "profiles_select_own" on public.profiles
 create policy "profiles_update_own" on public.profiles
   for update to authenticated using (id = (select auth.uid()))
   with check (id = (select auth.uid()));
+
+-- Preserve each user's best-ever streak for permanent achievement badges.
+create or replace function public.keep_longest_streak()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.longest_streak := greatest(old.longest_streak, new.current_streak);
+  return new;
+end;
+$$;
+create trigger profiles_keep_longest_streak
+  before update of current_streak on public.profiles
+  for each row execute function public.keep_longest_streak();
 
 -- Decks: the owner id must match the authenticated user for every operation.
 create policy "decks_select_own" on public.decks
@@ -825,6 +845,39 @@ as $$
 $$;
 revoke all on function public.weekly_friends_leaderboard() from public, anon;
 grant execute on function public.weekly_friends_leaderboard() to authenticated;
+
+-- Read only the signed-in user's profile and achievement status.
+create or replace function public.my_profile_badges()
+returns table (
+  display_name text,
+  friend_code text,
+  current_streak integer,
+  longest_streak integer,
+  is_developer boolean,
+  is_first_100 boolean,
+  classroom_badge_color text
+)
+language sql stable security definer
+set search_path = public
+as $$
+  select p.display_name,
+         p.friend_code,
+         p.current_streak,
+         p.longest_streak,
+         p.is_developer,
+         exists (
+           select 1 from (
+             select id, row_number() over (order by created_at, id) as signup_rank
+             from public.profiles
+           ) first_accounts
+           where first_accounts.id = p.id and first_accounts.signup_rank <= 100
+         ),
+         p.classroom_badge_color
+  from public.profiles p
+  where p.id = auth.uid();
+$$;
+revoke all on function public.my_profile_badges() from public, anon;
+grant execute on function public.my_profile_badges() to authenticated;
 
 -- Realtime is used for presence and leaderboard changes; row visibility is still checked by RLS.
 do $$

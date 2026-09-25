@@ -283,3 +283,21 @@ export async function saveDailyGoal(formData: FormData) {
     })
     .eq("id", user.id);
 }
+
+export async function saveClassroomBadgeColor(formData: FormData) {
+  const color = String(formData.get("classroom_badge_color") || "");
+  if (!/^#[\da-fA-F]{6}$/.test(color)) {
+    redirect("/profile?error=Choose%20a%20valid%20badge%20color");
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ classroom_badge_color: color })
+    .eq("id", user.id);
+  if (error) redirect(`/profile?error=${encodeURIComponent(error.message)}`);
+  redirect("/profile?saved=1");
+}

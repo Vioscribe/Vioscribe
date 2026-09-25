@@ -9,6 +9,7 @@ const links = [
   { href: "/friends", label: "Friends" },
   { href: "/rooms", label: "Rooms" },
   { href: "/heatmap", label: "Activity" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export default function Nav({ displayName }: { displayName: string }) {
