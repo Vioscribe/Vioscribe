@@ -310,6 +310,104 @@ a:hover {
   filter: brightness(1.08);
 }
 
+/* Filing Room cabinet drawers use square edges and stepped ember details. */
+.filing-kicker {
+  color: #d97728;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.filing-panel,
+.filing-item-card,
+.filing-notice,
+.filing-empty {
+  border: 1px solid #392b1f;
+  background: linear-gradient(145deg, #19140f, #100d0a);
+  box-shadow: inset 3px 0 0 rgb(217 85 13 / 14%);
+}
+
+.filing-panel,
+.filing-notice,
+.filing-empty {
+  padding: 1rem;
+}
+
+.filing-item-card {
+  border-left-color: #6b3b1e;
+}
+
+.filing-empty {
+  border-style: dashed;
+  color: #9b8a72;
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.filing-drawer {
+  position: relative;
+  min-height: 7.5rem;
+  overflow: hidden;
+  border: 1px solid #68401f;
+  border-top-color: #98602b;
+  background:
+    linear-gradient(90deg, rgb(249 115 22 / 8%) 0 5px, transparent 5px),
+    repeating-linear-gradient(0deg, #21170f 0 8px, #261a10 8px 16px);
+  box-shadow: inset 0 2px 0 rgb(255 212 92 / 7%), 0 4px 0 #090705;
+  transition: border-color 140ms ease, transform 140ms ease, filter 140ms ease;
+}
+
+.filing-drawer:hover {
+  transform: translateY(-2px);
+  border-color: #d97728;
+  filter: brightness(1.08);
+}
+
+.filing-drawer-open {
+  min-height: 8rem;
+  border-color: #a85b21;
+  background:
+    linear-gradient(90deg, rgb(249 115 22 / 12%) 0 7px, transparent 7px),
+    repeating-linear-gradient(0deg, #21170f 0 8px, #2a1b10 8px 16px);
+}
+
+.filing-drawer-label {
+  color: #a78b6b;
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+}
+
+.filing-drawer-handle {
+  position: absolute;
+  top: 1.15rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 0.55rem;
+  border: 2px solid #8e4c20;
+  background: #d97728;
+  box-shadow: 3px 3px 0 #100b07;
+}
+
+.filing-drawer-handle i {
+  display: block;
+  width: 0.35rem;
+  height: 0.2rem;
+  margin: 0.03rem auto;
+  background: #ffe18a;
+}
+
+.filing-notice {
+  display: grid;
+  gap: 0.5rem;
+  border-color: #75441e;
+  color: #efc785;
+}
+
+.filing-notice code {
+  color: #ffe18a;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 640px) {
   .site-nav-inner {
     justify-content: center;

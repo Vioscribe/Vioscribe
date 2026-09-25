@@ -5,7 +5,13 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { saveNotes } from "@/app/actions";
 
-export default function NotesEditor({ initialContent }: { initialContent: string }) {
+export default function NotesEditor({
+  noteId,
+  initialContent,
+}: {
+  noteId: string;
+  initialContent: string;
+}) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const editor = useEditor({
@@ -21,7 +27,7 @@ export default function NotesEditor({ initialContent }: { initialContent: string
       if (timer.current) clearTimeout(timer.current);
       const html = editor.getHTML();
       timer.current = setTimeout(() => {
-        void saveNotes(html);
+        void saveNotes(noteId, html);
       }, 800);
     },
   });
@@ -31,10 +37,10 @@ export default function NotesEditor({ initialContent }: { initialContent: string
       if (timer.current) {
         clearTimeout(timer.current);
         timer.current = null;
-        if (editor) void saveNotes(editor.getHTML());
+        if (editor) void saveNotes(noteId, editor.getHTML());
       }
     };
-  }, [editor]);
+  }, [editor, noteId]);
 
   if (!editor) return <p className="text-sm text-stone-400">Loading editor…</p>;
 

@@ -12,6 +12,11 @@ function todayFromForm(formData: FormData) {
   return String(formData.get("today") || new Date().toISOString().slice(0, 10));
 }
 
+function filingReturnTo(formData: FormData) {
+  const requested = String(formData.get("return_to") || "");
+  return /^\/files(?:\/[0-9a-f-]{36})?$/i.test(requested) ? requested : "/files";
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -20,6 +25,7 @@ export async function signOut() {
 
 export async function createDeck(formData: FormData) {
   const title = String(formData.get("title") || "").trim();
+  const fileId = String(formData.get("file_id") || "") || null;
   if (!title) return;
 
   const supabase = await createClient();
@@ -30,12 +36,132 @@ export async function createDeck(formData: FormData) {
 
   const { data, error } = await supabase
     .from("decks")
-    .insert({ user_id: user.id, title })
+    .insert(fileId ? { user_id: user.id, title, file_id: fileId } : { user_id: user.id, title })
     .select("id")
     .single();
 
-  if (error || !data) throw new Error(error?.message || "Could not create deck");
+  if (error || !data) {
+    const message = error?.message || "Could not create deck";
+    if (fileId) redirect(`/files/${fileId}?error=${encodeURIComponent(message)}`);
+    throw new Error(message);
+  }
   redirect(`/decks/${data.id}`);
+}
+
+export async function createFile(formData: FormData) {
+  const title = String(formData.get("title") || "").trim();
+  if (!title || title.length > 32) {
+    redirect(`/files?error=${encodeURIComponent("Use a title between 1 and 32 characters.")}`);
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.from("files").insert({ user_id: user.id, title });
+  if (error) redirect(`/files?error=${encodeURIComponent(error.message)}`);
+  redirect("/files?created=1");
+}
+
+export async function deleteFile(formData: FormData) {
+  const fileId = String(formData.get("file_id") || "");
+  if (!fileId) redirect("/files");
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.from("files").delete().eq("id", fileId).eq("user_id", user.id);
+  if (error) redirect(`/files/${fileId}?error=${encodeURIComponent(error.message)}`);
+  redirect("/files?deleted=1");
+}
+
+export async function createNote(formData: FormData) {
+  const title = String(formData.get("title") || "").trim();
+  const fileId = String(formData.get("file_id") || "") || null;
+  const errorPath = fileId ? `/files/${fileId}` : "/notes";
+  if (!title || title.length > 80) {
+    redirect(`${errorPath}?error=${encodeURIComponent("Use a note title between 1 and 80 characters.")}`);
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data, error } = await supabase
+    .from("notes")
+    .insert({ user_id: user.id, title, file_id: fileId })
+    .select("id")
+    .single();
+  if (error || !data) {
+    redirect(`${errorPath}?error=${encodeURIComponent(error?.message || "Could not create note")}`);
+  }
+  redirect(`/notes/${data.id}`);
+}
+
+export async function deleteNote(formData: FormData) {
+  const noteId = String(formData.get("note_id") || "");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.from("notes").delete().eq("id", noteId).eq("user_id", user.id);
+  if (error) redirect(`/notes?error=${encodeURIComponent(error.message)}`);
+  redirect("/notes?deleted=1");
+}
+
+export async function renameNote(formData: FormData) {
+  const noteId = String(formData.get("note_id") || "");
+  const title = String(formData.get("title") || "").trim();
+  if (!noteId || !title || title.length > 80) {
+    redirect(`/notes/${encodeURIComponent(noteId)}?error=${encodeURIComponent("Use a note title between 1 and 80 characters.")}`);
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("notes")
+    .update({ title })
+    .eq("id", noteId)
+    .eq("user_id", user.id);
+  if (error) redirect(`/notes/${noteId}?error=${encodeURIComponent(error.message)}`);
+  redirect(`/notes/${noteId}?saved=1`);
+}
+
+export async function moveNoteToFile(formData: FormData) {
+  const noteId = String(formData.get("note_id") || "");
+  const fileId = String(formData.get("file_id") || "") || null;
+  const returnTo = filingReturnTo(formData);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("notes")
+    .update({ file_id: fileId })
+    .eq("id", noteId)
+    .eq("user_id", user.id);
+  if (error) redirect(`${returnTo}?error=${encodeURIComponent(error.message)}`);
+  redirect(returnTo);
+}
+
+export async function moveDeckToFile(formData: FormData) {
+  const deckId = String(formData.get("deck_id") || "");
+  const fileId = String(formData.get("file_id") || "") || null;
+  const returnTo = filingReturnTo(formData);
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("decks")
+    .update({ file_id: fileId })
+    .eq("id", deckId)
+    .eq("user_id", user.id);
+  if (error) redirect(`${returnTo}?error=${encodeURIComponent(error.message)}`);
+  redirect(returnTo);
 }
 
 export async function deleteDeck(formData: FormData) {
@@ -235,17 +361,21 @@ export async function reviewCard(formData: FormData) {
   }
 }
 
-export async function saveNotes(content: string) {
+export async function saveNotes(noteId: string, content: string) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase
+  const update = supabase
     .from("notes")
-    .update({ content, updated_at: new Date().toISOString() })
-    .eq("user_id", user.id);
+    .update({ content, updated_at: new Date().toISOString() });
+  if (noteId === "legacy") {
+    await update.eq("user_id", user.id);
+  } else {
+    await update.eq("id", noteId).eq("user_id", user.id);
+  }
 }
 
 export async function saveDailyGoal(formData: FormData) {
