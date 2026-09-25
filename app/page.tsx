@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import HomeMascot from "@/components/HomeMascot";
+import LandingBrand from "@/components/LandingBrand";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
@@ -11,20 +11,49 @@ export default async function HomePage() {
   } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
 
   return (
-    <main className="mx-auto flex min-h-full w-full max-w-lg flex-col justify-center gap-6 px-6 py-16 pb-28">
-      <div className="w-fit rounded-lg bg-black p-2">
-        <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={194} height={60} priority />
+    <main className="landing-page">
+      <div className="landing-shell">
+        <header className="landing-header">
+          <LandingBrand />
+          <span className="landing-header-tag">[ STUDY / READY ]</span>
+        </header>
+
+        <section className="landing-hero">
+          <p className="landing-eyebrow">A SMALLER WAY TO STUDY</p>
+          <h1>Study in <span>small slices.</span></h1>
+          <p className="landing-summary">
+            Make a deck, add what you need to remember, then review at a pace that sticks.
+          </p>
+          <Link href={user ? "/decks" : "/login"} className="landing-cta">
+            <span>{user ? "Open your decks" : "Sign in to start"}</span>
+            <span aria-hidden="true">-&gt;</span>
+          </Link>
+        </section>
+
+        <section className="landing-how" aria-labelledby="landing-how-title">
+          <h2 id="landing-how-title" className="landing-section-label">~/HOW_IT_WORKS</h2>
+          <ol className="landing-steps">
+            <li>
+              <span className="landing-step-index">01</span>
+              <span><strong>Build a deck</strong><small>Pick one topic to focus on.</small></span>
+            </li>
+            <li>
+              <span className="landing-step-index">02</span>
+              <span><strong>Add your cards</strong><small>Question on the front, answer on the back.</small></span>
+            </li>
+            <li>
+              <span className="landing-step-index">03</span>
+              <span><strong>Review and repeat</strong><small>Missed cards come back sooner.</small></span>
+            </li>
+          </ol>
+        </section>
+
+        <section className="landing-tools" aria-label="More study tools">
+          <span>notes <i>{"// capture ideas"}</i></span>
+          <span>streaks <i>{"// keep a rhythm"}</i></span>
+          <span>friends + rooms <i>{"// study together"}</i></span>
+        </section>
       </div>
-      <h1 className="text-3xl font-semibold tracking-tight">Study in small slices.</h1>
-      <p className="text-stone-600">
-        Flashcards, a flip-card review, notes, and a daily streak. Sign in to start.
-      </p>
-      <Link
-        href={user ? "/decks" : "/login"}
-        className="inline-flex w-fit rounded-lg bg-teal-800 px-4 py-2.5 text-sm font-medium text-white hover:bg-teal-900"
-      >
-        {user ? "Open decks" : "Sign in"}
-      </Link>
       <HomeMascot />
     </main>
   );

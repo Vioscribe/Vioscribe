@@ -64,9 +64,14 @@ export default function AuthForm() {
   return (
     <div className="mx-auto w-full max-w-sm space-y-6">
       <div>
-        <div className="mb-6 w-fit rounded-lg bg-black p-2">
-          <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={194} height={60} priority />
-        </div>
+        <Image
+          className="landing-logo mb-6"
+          src="/vioscribe-logo.png"
+          alt="[ Vioscribe ]"
+          width={194}
+          height={60}
+          priority
+        />
         <h1 className="mt-1 text-2xl font-semibold">
           {mode === "login" ? "Log in" : "Create an account"}
         </h1>
