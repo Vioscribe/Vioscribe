@@ -67,9 +67,9 @@ export function VerifiedTick({ color, pulse = false }: { color: string; pulse?: 
     [0, 11, 20], [0, 12, 20], [1, 13, 18], [2, 14, 16], [3, 15, 14],
     [4, 16, 12], [6, 17, 8], [8, 18, 4],
   ];
-  // Two pixel-wide staircase strokes meet at a lower-left-of-center point.
+  // Three-pixel-wide staircase strokes meet at a lower-left-of-center point.
   const checkRows = [
-    [14, 6], [13, 7], [12, 8], [11, 9], [10, 10], [9, 11], [8, 12],
+    [13, 6], [12, 7], [11, 8], [10, 9], [9, 10], [8, 11], [7, 12],
     [4, 8], [5, 9], [6, 10], [7, 11], [8, 12],
   ];
 
@@ -84,7 +84,7 @@ export function VerifiedTick({ color, pulse = false }: { color: string; pulse?: 
           <rect key={`badge-${y}`} x={x} y={y} width={width} height="1" fill="currentColor" />
         ))}
         {checkRows.map(([x, y], index) => (
-          <rect key={`check-${index}`} x={x} y={y} width="2" height="1" fill="#fff" />
+          <rect key={`check-${index}`} x={x} y={y} width="3" height="1" fill="#fff" />
         ))}
       </svg>
     </span>
