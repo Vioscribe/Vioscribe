@@ -12,7 +12,7 @@ export default function SloganHighlight() {
         event.currentTarget.style.setProperty("--shimmer-y", `${y}%`);
       }}
     >
-      Don’t burn out.
+      don&apos;t burn out.
     </span>
   );
 }
