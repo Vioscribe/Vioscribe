@@ -26,6 +26,8 @@ function PixelMark({ mark, color }: { mark: string; color: string }) {
         </svg>
       ) : mark === "/" ? (
         <span className="dev-badge-slash">/</span>
+      ) : mark === "pro-tick" || mark === "classroom-tick" ? (
+        <VerifiedTick color={color} pulse={mark === "classroom-tick"} />
       ) : mark === "first100" ? (
         <span className="first-hundred-mark">100</span>
       ) : (
@@ -95,10 +97,12 @@ export default function ProfileBadges({
   isDeveloper,
   isFirst100,
   longestStreak,
+  classroomBadgeColor,
 }: {
   isDeveloper: boolean;
   isFirst100: boolean;
   longestStreak: number;
+  classroomBadgeColor: string;
 }) {
   const badges: Badge[] = [
     ...(isDeveloper ? [{
@@ -106,6 +110,12 @@ export default function ProfileBadges({
     }] : []),
     {
       id: "first-100", title: "First 100", detail: "One of the first 100 accounts", mark: "first100", color: "#59d5c9", earned: isFirst100, rare: true,
+    },
+    {
+      id: "pro", title: "Pro", detail: isDeveloper ? "Available in approved developer builds (for now)" : "Locked until Pro is available", mark: "pro-tick", color: "#f97316", earned: isDeveloper,
+    },
+    {
+      id: "classroom-pro", title: "Classroom Pro", detail: isDeveloper ? "Available in approved developer builds (for now)" : "Locked until Classroom Pro is available", mark: "classroom-tick", color: classroomBadgeColor, earned: isDeveloper,
     },
     ...[10, 25, 50, 100, 250, 500, 1000].map((milestone) => ({
       id: `streak-${milestone}`,

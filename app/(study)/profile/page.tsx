@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { saveClassroomBadgeColor } from "@/app/actions";
-import { VerifiedTick } from "@/components/ProfileBadges";
 import ProfileBadges from "@/components/ProfileBadges";
 import { createClient } from "@/lib/supabase/server";
 
@@ -55,44 +54,27 @@ export default async function ProfilePage({
           isDeveloper={profile.is_developer}
           isFirst100={profile.is_first_100}
           longestStreak={profile.longest_streak}
+          classroomBadgeColor={profile.classroom_badge_color}
         />
       </section>
 
-      <section className="space-y-4">
+      <section className="space-y-3">
         <div>
-          <h2 className="text-lg font-medium">Verified tick previews</h2>
-          <p className="text-xs text-stone-500">Subscription tiers are not available yet. These are visual previews, not account entitlements.</p>
+          <h2 className="text-lg font-medium">Classroom Pro tick color</h2>
+          <p className="text-xs text-stone-500">Choose the color for your future Classroom Pro badge. MVP accounts keep this badge locked.</p>
         </div>
-        <div className="profile-tick-grid">
-          <div className="profile-tick-card is-locked">
-            <div className="flex items-center gap-2">
-              <VerifiedTick color="#f97316" />
-              <strong>Pro</strong>
-              <span className="profile-badge-state">LOCKED</span>
-            </div>
-            <p>Warm orange pixel tick · unavailable until Pro launches.</p>
-          </div>
-          <div className="profile-tick-card">
-            <div className="flex items-center gap-2">
-              <VerifiedTick color={profile.classroom_badge_color} pulse />
-              <strong>Classroom Pro</strong>
-              <span className="profile-badge-state">PREVIEW</span>
-            </div>
-            <p>Choose a color for the future pulsing Classroom Pro tick.</p>
-            <form action={saveClassroomBadgeColor} className="profile-color-form">
-              <label htmlFor="classroom-badge-color">Tick color</label>
-              <input
-                id="classroom-badge-color"
-                name="classroom_badge_color"
-                type="color"
-                defaultValue={profile.classroom_badge_color}
-              />
-              <button type="submit" className="profile-save-button">Save color</button>
-            </form>
-            {params.saved && <p role="status" className="text-xs text-emerald-300">Color saved.</p>}
-            {params.error && <p role="alert" className="text-xs text-red-300">{params.error}</p>}
-          </div>
-        </div>
+        <form action={saveClassroomBadgeColor} className="profile-color-form">
+          <label htmlFor="classroom-badge-color">Tick color</label>
+          <input
+            id="classroom-badge-color"
+            name="classroom_badge_color"
+            type="color"
+            defaultValue={profile.classroom_badge_color}
+          />
+          <button type="submit" className="profile-save-button">Save color</button>
+        </form>
+        {params.saved && <p role="status" className="text-xs text-emerald-300">Color saved.</p>}
+        {params.error && <p role="alert" className="text-xs text-red-300">{params.error}</p>}
       </section>
     </div>
   );
