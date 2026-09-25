@@ -71,7 +71,8 @@ export function VerifiedTick({ color, pulse = false }: { color: string; pulse?: 
           d="M12 1h8v2h4v2h4v4h2v4h2v8h-2v4h-2v4h-4v2h-4v2h-8v-2H8v-2H4v-4H2v-4H0v-8h2V9h2V5h4V3h4z"
           fill="currentColor"
         />
-        <path d="M8 16 11 13 15 17 21 10 24 13 15 23z" fill="#fff" />
+        <path d="M6 12h4v4h4v4h4v4h-4v-4h-4v-4H6z" fill="#fff" />
+        <path d="M14 16h4v-4h4V8h4v4h-4v4h-4v4h-4z" fill="#fff" />
       </svg>
     </span>
   );
