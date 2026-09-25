@@ -172,7 +172,7 @@ export default function HomeMascot() {
         ref={mascotRef}
         type="button"
         disabled={exploding}
-        className={`home-mascot mood-${mood}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
+        className={`home-mascot mood-${mood} tap-${tapSequence % 2 ? "odd" : "even"}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
         aria-label="Wave to the little ember"
         onPointerEnter={() => {
           hoverTimer.current = setTimeout(() => setPleased(true), 450);

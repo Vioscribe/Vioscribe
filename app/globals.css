@@ -660,8 +660,12 @@ a:hover {
 
 .home-mascot.is-exploding { visibility: hidden; }
 
-.home-mascot.is-sparking .mascot-flame {
+.home-mascot.is-sparking.tap-odd .mascot-flame {
   animation: mascot-hop 420ms ease-out;
+}
+
+.home-mascot.is-sparking.tap-even .mascot-flame {
+  animation: mascot-hop-side 420ms ease-out;
 }
 
 .mascot-pupil {
@@ -754,6 +758,11 @@ a:hover {
 @keyframes mascot-hop {
   0%, 100% { transform: translateY(-2px) scale(1.06); }
   45% { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes mascot-hop-side {
+  0%, 100% { transform: translateY(-2px) scale(1.06); }
+  45% { transform: translate(2px, -8px) rotate(4deg) scale(1.02); }
 }
 
 @keyframes mascot-spark {
