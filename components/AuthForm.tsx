@@ -9,7 +9,6 @@ export default function AuthForm() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const router = useRouter();
@@ -25,7 +24,6 @@ export default function AuthForm() {
         email,
         password,
         options: {
-          data: { display_name: displayName.trim() || undefined },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
@@ -93,15 +91,9 @@ export default function AuthForm() {
 
       <form onSubmit={onEmailSubmit} className="space-y-3">
         {mode === "signup" && (
-          <label className="block text-sm">
-            Display name
-            <input
-              className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Alex"
-            />
-          </label>
+          <p className="text-sm text-stone-500">
+            Your username will be generated automatically.
+          </p>
         )}
         <label className="block text-sm">
           Email

@@ -7,7 +7,7 @@
 
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
-  display_name text not null default 'Student',
+  display_name text not null,
   friend_code text not null unique,
   -- Daily study goal (number of card reviews) and streak tracking
   daily_goal int not null default 10,
@@ -96,12 +96,28 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  adjectives text[] := array[
+    'Amber', 'Bright', 'Calm', 'Clever', 'Cozy', 'Daring', 'Golden', 'Kind',
+    'Lucky', 'Mellow', 'Misty', 'Quiet', 'Swift', 'Toasty', 'Warm', 'Witty'
+  ];
+  nouns text[] := array[
+    'Badger', 'Cedar', 'Comet', 'Cricket', 'Ember', 'Falcon', 'Fern', 'Fox',
+    'Heron', 'Lynx', 'Maple', 'Moth', 'Otter', 'Pine', 'Robin', 'Sparrow'
+  ];
+  new_friend_code text;
+  generated_name text;
 begin
+  new_friend_code := public.random_friend_code();
+  generated_name := adjectives[1 + floor(random() * array_length(adjectives, 1))::int]
+    || '-' || nouns[1 + floor(random() * array_length(nouns, 1))::int]
+    || '-' || new_friend_code;
+
   insert into public.profiles (id, display_name, friend_code)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data ->> 'display_name', split_part(new.email, '@', 1), 'Student'),
-    public.random_friend_code()
+    generated_name,
+    new_friend_code
   );
 
   insert into public.notes (user_id, content)
@@ -129,20 +145,19 @@ alter table public.study_reviews enable row level security;
 
 -- Table grants let signed-in clients issue queries; RLS below limits which rows
 -- those queries can read or change.
-grant select, insert, update, delete on public.profiles, public.decks, public.cards, public.notes to authenticated;
+grant select on public.profiles to authenticated;
+grant update (daily_goal, reviews_today, reviews_date, current_streak, last_goal_date)
+  on public.profiles to authenticated;
+grant select, insert, update, delete on public.decks, public.cards, public.notes to authenticated;
 grant select on public.friend_requests to authenticated;
 grant select, insert on public.study_reviews to authenticated;
 
 -- Profiles: each signed-in user can only access their own profile row.
 create policy "profiles_select_own" on public.profiles
   for select to authenticated using (id = (select auth.uid()));
-create policy "profiles_insert_own" on public.profiles
-  for insert to authenticated with check (id = (select auth.uid()));
 create policy "profiles_update_own" on public.profiles
   for update to authenticated using (id = (select auth.uid()))
   with check (id = (select auth.uid()));
-create policy "profiles_delete_own" on public.profiles
-  for delete to authenticated using (id = (select auth.uid()));
 
 -- Decks: the owner id must match the authenticated user for every operation.
 create policy "decks_select_own" on public.decks
