@@ -26,7 +26,7 @@ function PixelMark({ mark, color }: { mark: string; color: string }) {
         </svg>
       ) : mark === "/" ? (
         <span className="dev-badge-slash">/</span>
-      ) : mark === "100" ? (
+      ) : mark === "first100" ? (
         <span className="first-hundred-mark">100</span>
       ) : (
         <span className="streak-badge-mark">
@@ -105,7 +105,7 @@ export default function ProfileBadges({
       id: "developer", title: "Developer", detail: "Vioscribe developer", mark: "/", color: "#ef3434", earned: true, rare: true,
     }] : []),
     {
-      id: "first-100", title: "First 100", detail: "One of the first 100 accounts", mark: "100", color: "#59d5c9", earned: isFirst100,
+      id: "first-100", title: "First 100", detail: "One of the first 100 accounts", mark: "first100", color: "#59d5c9", earned: isFirst100, rare: true,
     },
     ...[10, 25, 50, 100, 250, 500, 1000].map((milestone) => ({
       id: `streak-${milestone}`,
