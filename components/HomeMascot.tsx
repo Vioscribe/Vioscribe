@@ -2,14 +2,21 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
-type EmberPixel = { x: number; y: number; dx: number; dy: number; midX: string; arc: string; color: string };
+type EmberPixel = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  spin: number;
+  color: string;
+};
 type ClickSpark = { x: string; y: string; dx: string; dy: string; size: string; duration: string; rotation: string };
 
 export default function HomeMascot() {
   const mascotRef = useRef<HTMLButtonElement>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const explosionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pixelRefs = useRef<(HTMLElement | null)[]>([]);
   const clickCount = useRef(0);
   const [blinking, setBlinking] = useState(false);
   const [pleased, setPleased] = useState(false);
@@ -61,7 +68,6 @@ export default function HomeMascot() {
       if (blinkEnd) clearTimeout(blinkEnd);
       if (hoverTimer.current) clearTimeout(hoverTimer.current);
       if (reactionTimer.current) clearTimeout(reactionTimer.current);
-      if (explosionTimer.current) clearTimeout(explosionTimer.current);
     };
   }, []);
 
@@ -71,6 +77,10 @@ export default function HomeMascot() {
     setTapSequence((sequence) => sequence + 1);
 
     if (clickCount.current >= 20) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        clickCount.current = 0;
+        return;
+      }
       const bounds = mascotRef.current?.getBoundingClientRect();
       if (!bounds) return;
 
@@ -90,27 +100,21 @@ export default function HomeMascot() {
       ];
       const cellWidth = bounds.width / 8;
       const cellHeight = bounds.height / shape.length;
-      const totalPixels = shape.reduce((total, row) => total + [...row].filter((cell) => cell === "#").length, 0);
       const nextPixels: EmberPixel[] = [];
 
       shape.forEach((row, rowIndex) => {
         [...row].forEach((cell, columnIndex) => {
           if (cell !== "#") return;
-          // Even spacing keeps the landing line legible instead of clumping.
-          const targetX = ((nextPixels.length + 0.5) / totalPixels) * window.innerWidth - 3.5;
-          // Let every pixel land close to the bottom edge before it reforms.
-          const targetY = Math.max(0, window.innerHeight - 5);
           const x = bounds.left + columnIndex * cellWidth;
           const y = bounds.top + rowIndex * cellHeight;
-          const dx = targetX - x;
-          const dy = targetY - y;
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 150 + Math.random() * 390;
           nextPixels.push({
             x,
             y,
-            dx,
-            dy,
-            midX: `${dx * 0.48}px`,
-            arc: `${Math.min(-24, dy * 0.22 - 44)}px`,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 90,
+            spin: (Math.random() - 0.5) * 900,
             color: colors[Math.min(colors.length - 1, Math.floor(rowIndex / 2))],
           });
         });
@@ -122,10 +126,6 @@ export default function HomeMascot() {
       setPleased(false);
       setAnnoyed(false);
       setMood(0);
-      explosionTimer.current = setTimeout(() => {
-        setPixels([]);
-        setExploding(false);
-      }, 3450);
       return;
     }
 
@@ -150,21 +150,86 @@ export default function HomeMascot() {
     }, 850);
   }
 
+  useEffect(() => {
+    if (!exploding || pixels.length === 0) return;
+
+    const particles = pixels.map((pixel) => ({
+      x: pixel.x,
+      y: pixel.y,
+      vx: pixel.vx,
+      vy: pixel.vy,
+      rotation: 0,
+      spin: pixel.spin,
+    }));
+    const startedAt = performance.now();
+    let previousAt = startedAt;
+    let frame = 0;
+    const scatterDuration = 2300;
+    const reformDuration = 900;
+    const gravity = 1100;
+    const pixelSize = 5;
+
+    function animate(now: number) {
+      const elapsed = now - startedAt;
+      const dt = Math.min((now - previousAt) / 1000, 0.035);
+      previousAt = now;
+
+      particles.forEach((particle, index) => {
+        const node = pixelRefs.current[index];
+        if (!node) return;
+
+        if (elapsed < scatterDuration) {
+          particle.vy += gravity * dt;
+          particle.x += particle.vx * dt;
+          particle.y += particle.vy * dt;
+          particle.rotation += particle.spin * dt;
+
+          if (particle.x < 0 || particle.x > window.innerWidth - pixelSize) {
+            particle.x = Math.max(0, Math.min(window.innerWidth - pixelSize, particle.x));
+            particle.vx *= -0.62;
+            particle.spin *= 0.82;
+          }
+          if (particle.y < 0) {
+            particle.y = 0;
+            particle.vy = Math.abs(particle.vy) * 0.58;
+          } else if (particle.y > window.innerHeight - pixelSize) {
+            particle.y = window.innerHeight - pixelSize;
+            particle.vy = -Math.abs(particle.vy) * 0.46;
+            particle.vx *= 0.82;
+            particle.spin *= 0.76;
+            if (Math.abs(particle.vy) < 70) particle.vy = 0;
+          }
+
+          node.style.transform = `translate3d(${particle.x - pixels[index].x}px, ${particle.y - pixels[index].y}px, 0) rotate(${particle.rotation}deg)`;
+        } else {
+          const progress = Math.min(1, (elapsed - scatterDuration) / reformDuration);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const x = particle.x + (pixels[index].x - particle.x) * eased;
+          const y = particle.y + (pixels[index].y - particle.y) * eased;
+          const rotation = particle.rotation * (1 - eased);
+          node.style.transform = `translate3d(${x - pixels[index].x}px, ${y - pixels[index].y}px, 0) rotate(${rotation}deg)`;
+        }
+      });
+
+      if (elapsed < scatterDuration + reformDuration) {
+        frame = requestAnimationFrame(animate);
+      } else {
+        setPixels([]);
+        setExploding(false);
+      }
+    }
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [exploding, pixels]);
+
   return (
     <>
       {exploding && (
         <span className="mascot-pixel-field" aria-hidden="true">
           {pixels.map((pixel, index) => {
-            const style = {
-              left: pixel.x,
-              top: pixel.y,
-              backgroundColor: pixel.color,
-              "--pixel-dx": `${pixel.dx}px`,
-              "--pixel-dy": `${pixel.dy}px`,
-              "--pixel-mid-x": pixel.midX,
-              "--pixel-arc": pixel.arc,
-            } as CSSProperties;
-            return <i key={index} className="mascot-pixel" style={style} />;
+            const style = { left: pixel.x, top: pixel.y, backgroundColor: pixel.color } as CSSProperties;
+            return <i key={index} ref={(node) => { pixelRefs.current[index] = node; }} className="mascot-pixel" style={style} />;
           })}
         </span>
       )}
