@@ -88,14 +88,16 @@ export default function HomeMascot() {
       ];
       const cellWidth = bounds.width / 8;
       const cellHeight = bounds.height / shape.length;
+      const totalPixels = shape.reduce((total, row) => total + [...row].filter((cell) => cell === "#").length, 0);
       const nextPixels: EmberPixel[] = [];
 
       shape.forEach((row, rowIndex) => {
         [...row].forEach((cell, columnIndex) => {
           if (cell !== "#") return;
-          const targetX = Math.random() * window.innerWidth;
+          // Even spacing keeps the landing line legible instead of clumping.
+          const targetX = ((nextPixels.length + 0.5) / totalPixels) * window.innerWidth - 3.5;
           // Let every pixel land close to the bottom edge before it reforms.
-          const targetY = Math.max(0, window.innerHeight - 7);
+          const targetY = Math.max(0, window.innerHeight - 5);
           const x = bounds.left + columnIndex * cellWidth;
           const y = bounds.top + rowIndex * cellHeight;
           const dx = targetX - x;
@@ -170,14 +172,66 @@ export default function HomeMascot() {
         }}
         onClick={react}
       >
-        <span className={`mascot-flame${blinking ? " is-blinking" : ""}`}>
-          <span className="mascot-face">
-            <span className="mascot-eye"><i /></span>
-            <span className="mascot-eye"><i /></span>
-            <span className="mascot-mouth">~</span>
+        {mood >= 2 && !exploding && (
+          <span className="mascot-dialogue" aria-hidden="true">
+            {mood >= 3 ? "ENOUGH!" : "STOP!"}
           </span>
-        </span>
-        <span className="mascot-logs"><i /><i /><i /></span>
+        )}
+        <svg
+          className={`mascot-flame${blinking ? " is-blinking" : ""}`}
+          viewBox="0 0 64 72"
+          role="presentation"
+        >
+          <defs>
+            <linearGradient id="emberShell" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stopColor="#c33b0a" />
+              <stop offset="0.5" stopColor="#ff7518" />
+              <stop offset="1" stopColor="#ca3909" />
+            </linearGradient>
+            <linearGradient id="emberCore" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stopColor="#ffad26" />
+              <stop offset="0.5" stopColor="#fff07a" />
+              <stop offset="1" stopColor="#ffc23a" />
+            </linearGradient>
+            <filter id="emberGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="2.2" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+          {/* Stepped flame outline echoes the pixel fire in the Vioscribe logo. */}
+          <path
+            d="M27 3h8v7h5v7h6v8h5v9h5v13h-5v7h-5v5h-7v4H18v-4h-7v-5H6v-8H3V34h5v-9h5v-8h6v-7h8z"
+            fill="url(#emberShell)"
+            filter="url(#emberGlow)"
+          />
+          <path d="M28 10h7v7h5v7h6v9h5v12h-5v7h-7v5H19v-5h-6v-7H9V34h5v-9h5v-8h9z" fill="#f05b0b" />
+          <path
+            className="mascot-inner-flame"
+            d="M29 17h6v7h5v7h5v8h4v9h-5v5H20v-5h-5v-7h4v-8h5v-8h5z"
+            fill="url(#emberCore)"
+          />
+          <path d="M29 26h6v8h5v9h-5v7H27v-7h-5v-7h5v-6h2z" fill="#fff4a6" opacity="0.86" />
+
+          {/* Bright square eyes and tiny pupils stay crisp at any display size. */}
+          <g className="mascot-eye">
+            <rect className="mascot-eye-base" x="17" y="34" width="11" height="10" fill="#ffdc59" />
+            <rect className="mascot-pupil" x="20.5" y="36" width="4" height="6" fill="#54210d" />
+          </g>
+          <g className="mascot-eye">
+            <rect className="mascot-eye-base" x="36" y="34" width="11" height="10" fill="#ffdc59" />
+            <rect className="mascot-pupil" x="39.5" y="36" width="4" height="6" fill="#54210d" />
+          </g>
+          <path className="mascot-mouth" d="M28 48h3v2h3v-2h3v3h-3v2h-3v-2h-3z" fill="#fff0bd" />
+
+          {/* Three chunky logs make the creature read as a campfire. */}
+          <path d="M8 55h15v5h-4v5H8z" fill="#713417" />
+          <path d="M22 57h20v6H22z" fill="#a64c16" />
+          <path d="M42 55h14v10H45v-5h-3z" fill="#713417" />
+          <path d="M7 64h50v5H7z" fill="#4c2414" />
+          <path d="M11 57h6v3h-6zm34 0h6v3h-6z" fill="#d57925" />
+          <path d="M27 59h4v2h-4zm7 1h5v2h-5z" fill="#e98b2e" />
+          <path d="M1 29h3v3H1zm55-8h3v3h-3zm-4-12h3v3h-3z" fill="#ffd45c" />
+        </svg>
         {spark && <span key={tapSequence} className="mascot-sparks" aria-hidden="true"><i /><i /><i /><i /></span>}
       </button>
     </>

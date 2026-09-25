@@ -116,86 +116,84 @@ a:hover {
   right: 1rem;
   bottom: 0.75rem;
   z-index: 10;
-  display: flex;
+  display: grid;
   width: 3.65rem;
   height: 4rem;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.12rem;
+  place-items: center;
   overflow: visible;
-  border: 1px solid #4a3322;
-  border-radius: 0.8rem;
-  background: #100d0a;
-  padding: 0.35rem;
-  color: #facc15;
-  font-family: var(--font-plex-mono), monospace;
-  font-size: 0.65rem;
-  line-height: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
   user-select: none;
-  transition: border-color 180ms ease, box-shadow 180ms ease;
+  transition: filter 180ms ease, transform 180ms ease;
 }
 
-.home-mascot:hover,
+.home-mascot:hover .mascot-flame,
+.home-mascot:focus-visible .mascot-flame {
+  filter: drop-shadow(0 0 8px rgb(255 147 36 / 55%));
+}
+
 .home-mascot:focus-visible {
-  border-color: #d97706;
-  box-shadow: 0 0 16px rgb(249 115 22 / 22%);
   outline: none;
+  filter: drop-shadow(0 0 5px rgb(255 213 92 / 35%));
+}
+
+.mascot-dialogue {
+  position: absolute;
+  z-index: 3;
+  top: -0.45rem;
+  left: -2.45rem;
+  padding: 0.22rem 0.35rem;
+  border: 2px solid #ffbf45;
+  background: #17100b;
+  box-shadow: 2px 2px 0 #7c3513;
+  color: #fff0bd;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 68% 78%, 60% 100%, 53% 78%, 0 78%);
+  animation: mascot-talk 180ms steps(2, end) both;
 }
 
 .mascot-flame {
-  position: relative;
-  display: grid;
-  width: 2.35rem;
-  height: 2.35rem;
-  place-items: center;
-  background: linear-gradient(90deg, #a92f09 0 13%, #df4b0c 13% 87%, #9b2a08 87%);
-  clip-path: polygon(
-    40% 0, 40% 12%, 30% 12%, 30% 24%, 20% 24%, 20% 40%, 10% 40%,
-    10% 72%, 20% 72%, 20% 88%, 80% 88%, 80% 72%, 90% 72%, 90% 40%,
-    80% 40%, 80% 24%, 70% 24%, 70% 12%, 60% 12%, 60% 0
-  );
-  filter: drop-shadow(0 0 5px rgb(249 115 22 / 35%));
+  display: block;
+  width: 2.6rem;
+  height: 2.9rem;
+  overflow: visible;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 5px rgb(249 115 22 / 32%));
   animation: mascot-bob 3s ease-in-out infinite;
   transition: filter 180ms ease, transform 180ms ease;
 }
 
-.mascot-flame::before {
-  position: absolute;
-  top: 0.2rem;
-  left: 50%;
-  width: 1.05rem;
-  height: 1.25rem;
-  background: linear-gradient(90deg, #f28a16 0 32%, #ffd95b 32% 78%, #ffc334 78%);
-  clip-path: polygon(40% 0, 60% 0, 60% 20%, 80% 20%, 80% 48%, 100% 48%, 100% 76%, 80% 76%, 80% 100%, 20% 100%, 20% 76%, 0 76%, 0 48%, 20% 48%, 20% 20%, 40% 20%);
-  content: "";
-  transform: translateX(-50%);
-}
-
 .home-mascot.is-pleased .mascot-flame {
-  filter: brightness(1.2);
+  filter: brightness(1.2) drop-shadow(0 0 7px rgb(255 145 31 / 50%));
   transform: translateY(-2px) scale(1.06);
 }
 
-.home-mascot.is-annoyed .mascot-eye {
-  border-color: #ff7a26;
-  background: #ff8b38;
-  box-shadow: 0 0 6px rgb(255 77 20 / 65%);
+.home-mascot.is-annoyed .mascot-eye-base {
+  fill: #ff8b38;
+  filter: drop-shadow(0 0 2px rgb(255 77 20 / 65%));
 }
 
 .home-mascot.is-annoyed .mascot-mouth {
-  color: #ffae52;
-  transform: rotate(180deg);
+  fill: #ffae52;
+  transform: scaleY(-1);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.home-mascot.mood-1 .mascot-eye {
-  box-shadow: 0 0 9px rgb(255 223 104 / 85%);
+.home-mascot.mood-1 .mascot-eye-base {
+  filter: drop-shadow(0 0 3px rgb(255 223 104 / 85%));
 }
 
-.home-mascot.mood-2 .mascot-flame::before {
+.home-mascot.mood-2 .mascot-inner-flame {
   filter: brightness(1.25);
-  transform: translateX(-50%) scale(1.12);
 }
 
 .home-mascot.is-exploding { visibility: hidden; }
@@ -204,67 +202,25 @@ a:hover {
   animation: mascot-hop 420ms ease-out;
 }
 
-.mascot-face {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  width: max-content;
-  grid-template-columns: repeat(2, 0.58rem);
-  justify-content: center;
-  justify-items: center;
-  column-gap: 0.24rem;
-  row-gap: 0.1rem;
-}
-
-.mascot-eye {
-  display: grid;
-  width: 0.58rem;
-  height: 0.58rem;
-  place-items: center;
-  border: 2px solid #facc15;
-  border-radius: 2px;
-  background: #ffcf55;
-  box-shadow: 0 0 5px rgb(255 207 85 / 55%);
-  transition: height 90ms ease;
-  overflow: hidden;
-}
-
-.mascot-eye i {
-  width: 0.2rem;
-  height: 0.25rem;
-  background: #512009;
+.mascot-pupil {
   transform: translate(var(--look-x, 0), var(--look-y, 0));
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 90ms ease-out;
 }
 
-.mascot-flame.is-blinking .mascot-eye { height: 2px; }
-.mascot-flame.is-blinking .mascot-eye i { display: none; }
-
-.mascot-mouth {
-  grid-column: 1 / -1;
-  color: #fff0bd;
-  font-size: 0.8rem;
-  line-height: 0.8;
+.mascot-eye-base {
+  transition: filter 180ms ease, transform 90ms ease;
 }
 
-.mascot-logs {
-  display: flex;
-  width: 2.1rem;
-  height: 0.38rem;
-  gap: 2px;
-  align-items: end;
+.mascot-flame.is-blinking .mascot-eye-base {
+  transform: scaleY(0.14);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-.mascot-logs i {
-  display: block;
-  height: 0.26rem;
-  flex: 1;
-  border: 1px solid #9a4515;
-  background: #6c3117;
-}
-
-.mascot-logs i:nth-child(2) {
-  height: 0.38rem;
-  background: #a34d16;
+.mascot-flame.is-blinking .mascot-pupil {
+  opacity: 0;
 }
 
 .mascot-sparks {
@@ -295,8 +251,8 @@ a:hover {
 
 .mascot-pixel {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   image-rendering: pixelated;
   animation:
     mascot-pixel-scatter 1500ms cubic-bezier(0.2, 0.65, 0.45, 1) forwards,
@@ -323,13 +279,18 @@ a:hover {
 
 @keyframes mascot-pixel-scatter {
   0% { opacity: 1; transform: translate(0, 0) rotate(0); }
-  35% { transform: translate(var(--pixel-mid-x), var(--pixel-arc)) rotate(150deg); }
-  100% { opacity: 0.95; transform: translate(var(--pixel-dx), var(--pixel-dy)) rotate(520deg); }
+  35% { transform: translate(var(--pixel-mid-x), var(--pixel-arc)) rotate(45deg); }
+  100% { opacity: 1; transform: translate(var(--pixel-dx), var(--pixel-dy)) rotate(90deg); }
 }
 
 @keyframes mascot-pixel-reform {
-  from { opacity: 0.95; transform: translate(var(--pixel-dx), var(--pixel-dy)) rotate(520deg); }
-  to { opacity: 0; transform: translate(0, 0) rotate(720deg); }
+  from { opacity: 1; transform: translate(var(--pixel-dx), var(--pixel-dy)) rotate(90deg); }
+  to { opacity: 0; transform: translate(0, 0) rotate(0); }
+}
+
+@keyframes mascot-talk {
+  from { opacity: 0; transform: translateY(3px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @media (max-width: 420px) {
