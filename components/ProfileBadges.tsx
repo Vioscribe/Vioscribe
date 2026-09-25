@@ -66,8 +66,12 @@ export function VerifiedTick({ color, pulse = false }: { color: string; pulse?: 
       style={{ "--tick-color": color } as React.CSSProperties}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 24 24" shapeRendering="crispEdges">
-        <path d="M3 12h4v4h4v-4h4V8h4v4h-4v4h-4v4H7v-4H3z" fill="currentColor" />
+      <svg viewBox="0 0 32 32" shapeRendering="crispEdges">
+        <path
+          d="M12 1h8v2h4v2h4v4h2v4h2v8h-2v4h-2v4h-4v2h-4v2h-8v-2H8v-2H4v-4H2v-4H0v-8h2V9h2V5h4V3h4z"
+          fill="currentColor"
+        />
+        <path d="M8 16 11 13 15 17 21 10 24 13 15 23z" fill="#fff" />
       </svg>
     </span>
   );

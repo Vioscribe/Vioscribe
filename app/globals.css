@@ -796,8 +796,8 @@ a:hover {
 .profile-tick-card.is-locked { opacity: 0.62; }
 .profile-tick-card strong { color: #f4e6bf; font-size: 0.75rem; }
 .profile-tick-card > p { margin-top: 0.5rem; color: #a9977b; font-size: 0.62rem; line-height: 1.5; }
-.verified-tick { display: inline-grid; width: 1.1rem; height: 1.1rem; flex: 0 0 auto; place-items: center; clip-path: polygon(0 0, 75% 0, 75% 20%, 100% 20%, 100% 75%, 75% 75%, 75% 100%, 20% 100%, 20% 75%, 0 75%); background: var(--tick-color); color: #fff; }
-.verified-tick svg { width: 0.8rem; height: 0.8rem; }
+.verified-tick { display: inline-grid; width: 1.7rem; height: 1.7rem; flex: 0 0 auto; place-items: center; color: var(--tick-color); filter: drop-shadow(0 1px 2px rgb(0 0 0 / 45%)); }
+.verified-tick svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .verified-tick.is-pulsing { animation: classroom-tick-pulse 1.8s ease-in-out infinite; }
 @keyframes classroom-tick-pulse { 0%, 100% { filter: brightness(0.8); transform: scale(0.96); } 50% { filter: brightness(1.45) drop-shadow(0 0 5px var(--tick-color)); transform: scale(1.08); } }
 .profile-color-form { display: flex; align-items: center; gap: 0.55rem; margin-top: 0.7rem; color: #b5a487; font-size: 0.65rem; }
