@@ -60,25 +60,32 @@ function BadgeCard({ badge }: { badge: Badge }) {
 }
 
 export function VerifiedTick({ color, pulse = false }: { color: string; pulse?: boolean }) {
+  // Each row is a whole-pixel rectangle, forming a staircase circle on a 20px grid.
+  const circleRows = [
+    [8, 1, 4], [6, 2, 8], [4, 3, 12], [3, 4, 14], [2, 5, 16],
+    [1, 6, 18], [0, 7, 20], [0, 8, 20], [0, 9, 20], [0, 10, 20],
+    [0, 11, 20], [0, 12, 20], [1, 13, 18], [2, 14, 16], [3, 15, 14],
+    [4, 16, 12], [6, 17, 8], [8, 18, 4],
+  ];
+  // Two pixel-wide staircase strokes meet at a lower-left-of-center point.
+  const checkRows = [
+    [14, 6], [13, 7], [12, 8], [11, 9], [10, 10], [9, 11], [8, 12],
+    [4, 8], [5, 9], [6, 10], [7, 11], [8, 12],
+  ];
+
   return (
     <span
       className={`verified-tick${pulse ? " is-pulsing" : ""}`}
       style={{ "--tick-color": color } as React.CSSProperties}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 32 32" shapeRendering="crispEdges">
-        <path
-          d="M12 1h8v2h4v2h4v4h2v4h2v8h-2v4h-2v4h-4v2h-4v2h-8v-2H8v-2H4v-4H2v-4H0v-8h2V9h2V5h4V3h4z"
-          fill="currentColor"
-        />
-        <path
-          d="M7 15 13 21 25 9"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="4"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
-        />
+      <svg viewBox="0 0 20 20" shapeRendering="crispEdges">
+        {circleRows.map(([x, y, width]) => (
+          <rect key={`badge-${y}`} x={x} y={y} width={width} height="1" fill="currentColor" />
+        ))}
+        {checkRows.map(([x, y], index) => (
+          <rect key={`check-${index}`} x={x} y={y} width="2" height="1" fill="#fff" />
+        ))}
       </svg>
     </span>
   );
