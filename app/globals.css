@@ -230,6 +230,21 @@ a:hover {
   color: #ffd45c;
 }
 
+.landing-slogan-highlight {
+  border-radius: 2px;
+  transition: text-shadow 180ms ease;
+}
+
+.landing-slogan-highlight:hover {
+  background: linear-gradient(105deg, #ffd45c 0%, #fff1bb 43%, #fff9df 50%, #ffd45c 58%, #ffd45c 100%);
+  background-size: 230% 100%;
+  background-position: 100% 0;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 10px rgb(255 190 58 / 14%);
+  animation: slogan-shimmer 950ms ease-out forwards;
+}
+
 .landing-summary {
   max-width: 35rem;
   margin: 1rem 0 1.5rem;
@@ -356,6 +371,10 @@ a:hover {
   100% { opacity: 0; transform: translate(var(--ember-x, 0), -28px) scale(0.7); }
 }
 
+@keyframes slogan-shimmer {
+  to { background-position: -130% 0; }
+}
+
 @media (max-width: 640px) {
   .landing-header-tag { font-size: 0.58rem; }
   .landing-steps { grid-template-columns: 1fr; }
@@ -369,6 +388,11 @@ a:hover {
   .landing-brand.is-igniting .landing-logo,
   .landing-brand.is-igniting .landing-embers i { animation: none; }
   .landing-cta { transition: none; }
+  .landing-slogan-highlight:hover {
+    background: none;
+    color: #ffd45c;
+    animation: none;
+  }
 }
 
 /* TipTap notes editor */
