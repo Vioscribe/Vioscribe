@@ -13,22 +13,29 @@ const links = [
 
 export default function Nav({ displayName }: { displayName: string }) {
   return (
-    <header className="border-b border-stone-200 bg-black">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 py-3 pl-0 pr-4">
-        <Link href="/decks" aria-label="Vioscribe home" className="shrink-0">
-          <Image src="/vioscribe-logo.png" alt="[ Vioscribe ]" width={162} height={50} priority />
+    <header className="site-nav">
+      <div className="site-nav-inner">
+        <Link href="/decks" aria-label="Vioscribe home" className="site-nav-brand">
+          <Image
+            className="site-nav-logo"
+            src="/vioscribe-logo.png"
+            alt="[ Vioscribe ]"
+            width={162}
+            height={50}
+            priority
+          />
         </Link>
-        <nav className="flex items-center gap-3 text-sm sm:gap-4">
+        <nav className="site-nav-links">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="text-stone-600 hover:text-amber-300">
+            <Link key={l.href} href={l.href}>
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3 text-sm">
-          <span className="hidden text-stone-500 sm:inline">{displayName}</span>
+        <div className="site-nav-account">
+          <span className="site-nav-name">{displayName}</span>
           <form action={signOut}>
-            <button type="submit" className="text-stone-500 hover:text-stone-800">
+            <button type="submit">
               Sign out
             </button>
           </form>

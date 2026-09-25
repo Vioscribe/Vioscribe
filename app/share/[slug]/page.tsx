@@ -31,7 +31,7 @@ export default async function SharedDeckPage({
   if (error) throw new Error(error.message);
 
   return (
-    <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8">
+    <main className="shared-deck-page mx-auto w-full max-w-3xl space-y-6 px-4 py-8">
       <Link href="/" className="text-sm text-stone-500 hover:underline">Vioscribe</Link>
       <header className="space-y-2">
         <p className="text-xs uppercase tracking-wider text-amber-300">Shared deck · read only</p>

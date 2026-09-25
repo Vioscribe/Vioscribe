@@ -177,6 +177,9 @@ export default function HomeMascot() {
             {mood >= 3 ? "ENOUGH!" : "STOP!"}
           </span>
         )}
+        <span className="mascot-ambient-sparks" aria-hidden="true">
+          <i /><i /><i /><i /><i /><i />
+        </span>
         <svg
           className={`mascot-flame${blinking ? " is-blinking" : ""}`}
           viewBox="0 0 64 72"

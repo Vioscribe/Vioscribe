@@ -20,9 +20,9 @@ export default async function StudyLayout({
     .single();
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="study-app-shell flex min-h-full flex-col">
       <Nav displayName={profile?.display_name || "Student"} />
-      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">{children}</div>
+      <div className="study-content mx-auto w-full max-w-3xl flex-1 px-4 py-8">{children}</div>
     </div>
   );
 }
