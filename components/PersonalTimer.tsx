@@ -106,6 +106,9 @@ export default function PersonalTimer({
     }
     const updated = timerRow(data);
     if (updated) {
+      // Align the display clock with the RPC response so a stale one-second
+      // interval tick cannot make a resumed timer appear to gain a second.
+      setNow(Date.now());
       setTimer(updated);
       if (action === "pause" && previousPhase !== updated.timer_phase) {
         setNotice(previousPhase === "study"
