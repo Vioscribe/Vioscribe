@@ -61,7 +61,7 @@ export default async function ProfilePage({
       <section className="space-y-3">
         <div>
           <h2 className="text-lg font-medium">Classroom Pro tick color</h2>
-          <p className="text-xs text-stone-500">Choose the color for your future Classroom Pro badge. MVP accounts keep this badge locked.</p>
+          <p className="text-xs text-stone-500">Choose the color for your future Classroom Pro badge. Classroom Pro will be available at a later date.</p>
         </div>
         <form action={saveClassroomBadgeColor} className="profile-color-form">
           <label htmlFor="classroom-badge-color">Tick color</label>
