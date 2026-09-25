@@ -775,6 +775,20 @@ a:hover {
   animation: mascot-talk 180ms steps(2, end) both;
 }
 
+.mascot-dialogue--welcome {
+  top: auto;
+  right: 0;
+  bottom: calc(100% - 0.15rem);
+  left: auto;
+  width: min(17rem, calc(100vw - 2rem));
+  padding: 0.55rem 0.65rem;
+  clip-path: none;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  white-space: normal;
+  text-align: left;
+}
+
 .mascot-flame {
   display: block;
   width: 2.6rem;

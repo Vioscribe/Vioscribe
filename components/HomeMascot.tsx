@@ -12,7 +12,7 @@ type EmberPixel = {
 };
 type ClickSpark = { x: string; y: string; dx: string; dy: string; size: string; duration: string; rotation: string };
 
-export default function HomeMascot() {
+export default function HomeMascot({ greeting = false }: { greeting?: boolean }) {
   const mascotRef = useRef<HTMLButtonElement>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -251,7 +251,7 @@ export default function HomeMascot() {
         type="button"
         disabled={exploding}
         className={`home-mascot mood-${mood} tap-${tapSequence % 2 ? "odd" : "even"}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
-        aria-label="Wave to the little ember"
+        aria-label={greeting ? "Sparky says: Hi, I'm Sparky, welcome to Vioscribe" : "Wave to the little ember"}
         onPointerEnter={() => {
           setIdleMessage(false);
           hoverTimer.current = setTimeout(() => setPleased(true), 450);
@@ -265,7 +265,11 @@ export default function HomeMascot() {
           react();
         }}
       >
-        {idleMessage && mood < 2 && !exploding ? (
+        {greeting && !exploding ? (
+          <span className="mascot-dialogue mascot-dialogue--welcome" aria-hidden="true">
+            Hi, I&apos;m Sparky, welcome to Vioscribe!
+          </span>
+        ) : idleMessage && mood < 2 && !exploding ? (
           <span className="mascot-dialogue" aria-hidden="true">Still glowing…</span>
         ) : mood >= 2 && !exploding ? (
           <span className="mascot-dialogue" aria-hidden="true">

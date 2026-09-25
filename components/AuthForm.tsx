@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import HomeMascot from "@/components/HomeMascot";
 
 export default function AuthForm() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -60,6 +61,8 @@ export default function AuthForm() {
   }
 
   return (
+    <>
+    {mode === "signup" && <HomeMascot greeting />}
     <div className="mx-auto w-full max-w-sm space-y-6">
       <div>
         <Image
@@ -138,5 +141,6 @@ export default function AuthForm() {
         {mode === "login" ? "Need an account? Sign up" : "Already have an account? Log in"}
       </button>
     </div>
+    </>
   );
 }
