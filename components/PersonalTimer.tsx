@@ -68,7 +68,10 @@ export default function PersonalTimer({
     const channel = supabase
       .channel(`personal-timer:${userId}`)
       .on("postgres_changes", {
-        event: "*", schema: "public", table: "personal_timers", filter: `user_id=eq.${userId}`,
+        // RLS limits this subscription to the signed-in user's timer row.
+        // Leaving the filter off avoids Realtime's invalid-column filter error;
+        // the table's own-row RLS policy still limits delivered updates.
+        event: "*", schema: "public", table: "personal_timers",
       }, (payload) => setTimer(payload.new as TimerRow))
       .subscribe();
 
