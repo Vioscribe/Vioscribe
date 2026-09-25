@@ -693,16 +693,14 @@ a:hover {
 
 .mascot-sparks i {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  left: var(--spark-start-x, 50%);
+  top: var(--spark-start-y, 40%);
+  width: var(--spark-size, 4px);
+  height: var(--spark-size, 4px);
   background: #ffd45c;
-  animation: mascot-spark 580ms ease-out forwards;
+  box-shadow: 0 0 5px rgb(255 127 25 / 65%);
+  animation: mascot-spark var(--spark-duration, 580ms) ease-out forwards;
 }
-
-.mascot-sparks i:nth-child(1) { left: 8%; top: 35%; --spark-x: -13px; --spark-y: -12px; }
-.mascot-sparks i:nth-child(2) { right: 8%; top: 32%; --spark-x: 13px; --spark-y: -13px; }
-.mascot-sparks i:nth-child(3) { left: 20%; top: 8%; --spark-x: -9px; --spark-y: -18px; }
-.mascot-sparks i:nth-child(4) { right: 20%; top: 5%; --spark-x: 9px; --spark-y: -19px; }
 
 .mascot-ambient-sparks {
   position: absolute;
@@ -748,10 +746,6 @@ a:hover {
     mascot-pixel-reform 900ms cubic-bezier(0.45, 0, 0.8, 0.3) 2400ms forwards;
 }
 
-.mascot-sparks i {
-  animation-duration: 360ms;
-}
-
 @keyframes mascot-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
@@ -763,7 +757,10 @@ a:hover {
 }
 
 @keyframes mascot-spark {
-  to { opacity: 0; transform: translate(var(--spark-x), var(--spark-y)) scale(0.55); }
+  to {
+    opacity: 0;
+    transform: translate(var(--spark-x), var(--spark-y)) rotate(var(--spark-rotation)) scale(0.55);
+  }
 }
 
 @keyframes mascot-ambient-rise {

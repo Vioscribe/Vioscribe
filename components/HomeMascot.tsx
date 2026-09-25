@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 type EmberPixel = { x: number; y: number; dx: number; dy: number; midX: string; arc: string; color: string };
+type ClickSpark = { x: string; y: string; dx: string; dy: string; size: string; duration: string; rotation: string };
 
 export default function HomeMascot() {
   const mascotRef = useRef<HTMLButtonElement>(null);
@@ -14,6 +15,7 @@ export default function HomeMascot() {
   const [pleased, setPleased] = useState(false);
   const [annoyed, setAnnoyed] = useState(false);
   const [spark, setSpark] = useState(false);
+  const [sparkParticles, setSparkParticles] = useState<ClickSpark[]>([]);
   const [tapSequence, setTapSequence] = useState(0);
   const [mood, setMood] = useState(0);
   const [exploding, setExploding] = useState(false);
@@ -130,6 +132,15 @@ export default function HomeMascot() {
     const nextMood = Math.floor(clickCount.current / 5);
     setMood(nextMood);
     setAnnoyed(nextMood >= 3);
+    setSparkParticles(Array.from({ length: 6 }, () => ({
+      x: `${24 + Math.random() * 52}%`,
+      y: `${23 + Math.random() * 42}%`,
+      dx: `${-28 + Math.random() * 56}px`,
+      dy: `${-48 + Math.random() * 36}px`,
+      size: `${2 + Math.random() * 2}px`,
+      duration: `${380 + Math.random() * 360}ms`,
+      rotation: `${-150 + Math.random() * 300}deg`,
+    })));
     setSpark(true);
     setPleased(true);
     if (reactionTimer.current) clearTimeout(reactionTimer.current);
@@ -235,7 +246,22 @@ export default function HomeMascot() {
           <path d="M27 59h4v2h-4zm7 1h5v2h-5z" fill="#e98b2e" />
           <path d="M1 29h3v3H1zm55-8h3v3h-3zm-4-12h3v3h-3z" fill="#ffd45c" />
         </svg>
-        {spark && <span key={tapSequence} className="mascot-sparks" aria-hidden="true"><i /><i /><i /><i /></span>}
+        {spark && (
+          <span key={tapSequence} className="mascot-sparks" aria-hidden="true">
+            {sparkParticles.map((particle, index) => {
+              const style = {
+                "--spark-start-x": particle.x,
+                "--spark-start-y": particle.y,
+                "--spark-x": particle.dx,
+                "--spark-y": particle.dy,
+                "--spark-size": particle.size,
+                "--spark-duration": particle.duration,
+                "--spark-rotation": particle.rotation,
+              } as CSSProperties;
+              return <i key={index} style={style} />;
+            })}
+          </span>
+        )}
       </button>
     </>
   );
