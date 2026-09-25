@@ -28,20 +28,30 @@ export default async function ReviewPage({
     if (!room) notFound();
   }
 
-  // Due cards first (including brand-new ones, whose next_review_at is "now")
-  const { data: cards } = await supabase
-    .from("cards")
-    .select("id, deck_id, front, back, interval_minutes, next_review_at")
-    .eq("deck_id", id)
-    .lte("next_review_at", new Date().toISOString())
-    .order("next_review_at", { ascending: true });
+  // Load the deck once so the session can offer a voluntary full review pass.
+  const [allCardsResult, dueCardsResult] = await Promise.all([
+    supabase
+      .from("cards")
+      .select("id, deck_id, front, back, interval_minutes, next_review_at")
+      .eq("deck_id", id)
+      .order("next_review_at", { ascending: true }),
+    supabase
+      .from("cards")
+      .select("id, deck_id, front, back, interval_minutes, next_review_at")
+      .eq("deck_id", id)
+      .lte("next_review_at", new Date().toISOString())
+      .order("next_review_at", { ascending: true }),
+  ]);
+  const allCards = (allCardsResult.data || []) as Card[];
+  const dueCards = (dueCardsResult.data || []) as Card[];
 
   return (
     <ReviewSession
       deckId={deck.id}
       deckTitle={deck.title}
       roomId={roomId || null}
-      initialCards={(cards || []) as Card[]}
+      initialCards={dueCards}
+      allCards={allCards}
     />
   );
 }

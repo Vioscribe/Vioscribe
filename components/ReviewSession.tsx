@@ -18,11 +18,13 @@ export default function ReviewSession({
   deckTitle,
   roomId = null,
   initialCards,
+  allCards,
 }: {
   deckId: string;
   deckTitle: string;
   roomId?: string | null;
   initialCards: Card[];
+  allCards: Card[];
 }) {
   // Queue: missed cards are pushed to the end so they show up again sooner.
   const [queue, setQueue] = useState<QueuedCard[]>(() =>
@@ -64,6 +66,18 @@ export default function ReviewSession({
         </Link>
         <h1 className="text-2xl font-semibold">All caught up</h1>
         <p className="text-stone-600">No more cards due in this deck right now.</p>
+        {allCards.length > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              setQueue(allCards.map((card) => ({ card, retry: false })));
+              setFlipped(false);
+            }}
+            className="rounded-lg border border-amber-500/50 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-200 transition-colors hover:bg-amber-500/20"
+          >
+            Study anyway
+          </button>
+        )}
       </div>
     );
   }
@@ -80,10 +94,18 @@ export default function ReviewSession({
       <button
         type="button"
         onClick={() => setFlipped((f) => !f)}
-        className="flex min-h-48 w-full items-center justify-center rounded-2xl border border-stone-200 bg-white p-8 text-center text-xl shadow-sm"
+        aria-label={flipped ? "Show the card question" : "Show the card answer"}
+        aria-pressed={flipped}
+        className={`review-flip-button w-full rounded-2xl border border-stone-200 bg-white text-center text-xl shadow-sm${flipped ? " is-flipped" : ""}`}
       >
-        {flipped ? current.back : current.front}
-        <span className="sr-only">Flip card</span>
+        <span className="review-card-inner">
+          <span className="review-card-face review-card-front" aria-hidden={flipped}>
+            {current.front}
+          </span>
+          <span className="review-card-face review-card-back" aria-hidden={!flipped}>
+            {current.back}
+          </span>
+        </span>
       </button>
       <p className="text-center text-xs text-stone-400">Tap the card to flip</p>
 
