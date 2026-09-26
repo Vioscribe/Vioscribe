@@ -1,4 +1,5 @@
 import AuthForm from "@/components/AuthForm";
+import AuthPageShell from "@/components/AuthPageShell";
 
 export default async function LoginPage({
   searchParams,
@@ -9,8 +10,8 @@ export default async function LoginPage({
   const initialMessage = Array.isArray(error) ? error[0] : error;
 
   return (
-    <main className="landing-auth-page flex min-h-full items-center justify-center px-4 py-16">
+    <AuthPageShell>
       <AuthForm initialMessage={initialMessage} />
-    </main>
+    </AuthPageShell>
   );
 }

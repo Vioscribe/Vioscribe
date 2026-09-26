@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import HomeMascot from "@/components/HomeMascot";
 
@@ -136,6 +137,16 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
+        {mode === "login" && (
+          <p className="text-right">
+            <Link
+              href={email.trim() ? `/forgot-password?email=${encodeURIComponent(email.trim())}` : "/forgot-password"}
+              className="text-sm text-stone-500 underline"
+            >
+              Forgot password?
+            </Link>
+          </p>
+        )}
         <button
           type="submit"
           disabled={busy}

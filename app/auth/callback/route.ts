@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-// Google (and email confirm) land here; exchange the code for a session cookie.
+// OAuth, email confirm, and password recovery land here; exchange the code for a session cookie.
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const { searchParams, origin } = requestUrl;
@@ -10,20 +10,22 @@ export async function GET(request: Request) {
   const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//")
     ? requestedNext
     : "/decks";
+  const isPasswordRecovery = next === "/reset-password";
   const forwardedHost = request.headers.get("x-forwarded-host");
   const redirectOrigin = process.env.NODE_ENV === "development" || !forwardedHost
     ? origin
     : `https://${forwardedHost}`;
 
-  function redirectToLogin(message: string) {
-    const loginUrl = new URL("/login", redirectOrigin);
-    loginUrl.searchParams.set("error", message);
-    return NextResponse.redirect(loginUrl);
+  function redirectWithError(message: string) {
+    const failPath = isPasswordRecovery ? "/forgot-password" : "/login";
+    const failUrl = new URL(failPath, redirectOrigin);
+    failUrl.searchParams.set("error", message);
+    return NextResponse.redirect(failUrl);
   }
 
   const providerError = searchParams.get("error_description") || searchParams.get("error");
   if (providerError) {
-    return redirectToLogin(providerError);
+    return redirectWithError(providerError);
   }
 
   if (code) {
@@ -33,8 +35,16 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL(next, redirectOrigin));
     }
 
-    return redirectToLogin(`Google sign-in failed: ${error.message}`);
+    if (isPasswordRecovery) {
+      return redirectWithError("This password reset link is invalid or has expired.");
+    }
+
+    return redirectWithError(`Google sign-in failed: ${error.message}`);
   }
 
-  return redirectToLogin("Google sign-in failed because no authorization code was returned.");
+  if (isPasswordRecovery) {
+    return redirectWithError("This password reset link is invalid or has expired.");
+  }
+
+  return redirectWithError("Google sign-in failed because no authorization code was returned.");
 }
