@@ -21,6 +21,18 @@ NEXT_PUBLIC_CONTACT_EMAIL=your-public-contact-email
 
 Keep `.env.local` private; it is ignored by Git.
 
+## Database setup
+
+This project uses Supabase for its database, auth, and Realtime features.
+
+1. Create a Supabase project.
+2. For a fresh install, run `supabase/schema.sql` against your project.
+3. For an existing project, apply everything in `supabase/migrations/` in filename (timestamp) order — they're not auto-run, so this must be done manually via the Supabase SQL editor or CLI.
+
+## Project docs
+
+See [`docs/mvp-spec.md`](docs/mvp-spec.md) for the full feature spec, data model, and current build status. `docs/track-a-infrastructure-brief.md` and `docs/track-b-features-polish-brief.md` cover the work currently in progress.
+
 ## Deploy on Netlify
 
 1. Import the GitHub repository in the Netlify dashboard.
