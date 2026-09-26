@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Terms | Vioscribe" };
 
 export default function TermsPage() {
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "vioscribe.support@gmail.com";
 
   return (
     <main className="legal-page">

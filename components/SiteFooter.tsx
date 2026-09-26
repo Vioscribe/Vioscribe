@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export default function SiteFooter() {
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "vioscribe.support@gmail.com";
 
   return (
     <footer className="site-footer">
@@ -9,11 +9,7 @@ export default function SiteFooter() {
       <nav aria-label="Legal and contact" className="site-footer-links">
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
-        {contactEmail ? (
-          <a href={`mailto:${contactEmail}`}>Contact</a>
-        ) : (
-          <span title="Set NEXT_PUBLIC_CONTACT_EMAIL before launch">Contact email pending</span>
-        )}
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
       </nav>
     </footer>
   );
