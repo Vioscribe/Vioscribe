@@ -32,6 +32,8 @@ Track A owns everything touching auth, the live database, RLS, and deployment �
    - I'll buy the domain myself (needs a payment method) — once I give you the domain name, update Supabase Auth Site URL/Redirect URLs, Google OAuth redirect URIs, and any hardcoded site URL in the codebase.
    - Tell me clearly when you need the domain name, then keep working on anything else in the meantime.
 
+6. **Security checklist** — see `docs/security/security-checklist.md` for the full pre-launch security pass. It's kept in its own file since it's a distinct, self-contained piece of work, but it's still part of this track's scope — go through it after step 5.
+
 ## Files/areas you own
 `supabase/` (migrations, RLS policies), Supabase dashboard config, Netlify config/env vars, anything in the codebase that reads environment variables for auth redirects.
 

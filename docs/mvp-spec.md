@@ -46,8 +46,9 @@ This section is the working snapshot from the build tool (Codex/Claude Code) as 
 6. No Privacy Policy, Terms, or contact page yet — footer currently shows a placeholder ("Contact email pending").
 7. No custom 404 page yet.
 8. `README.md` is still the default Next.js starter — needs real setup instructions, `.env.local` variable names (never values), migration order, and run commands.
+9. A full pre-launch security checklist (key handling, field-level tamper protection, session cookie config, bot protection, output sanitization for the notes editor, response trimming, security headers, dependency scanning) — see `docs/security/security-checklist.md` for the complete list.
 
-These eight items are the actual remaining gate to launch — everything else in this spec beyond them is either already built or explicitly out of scope below.
+These nine items are the actual remaining gate to launch — everything else in this spec beyond them is either already built or explicitly out of scope below.
 
 ## Pages
 1. **Landing / login:** short pitch, sign up, log in.
