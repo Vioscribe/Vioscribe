@@ -1020,7 +1020,10 @@ a:hover {
 
 .goal-editor-form { display: grid; gap: 0.55rem; }
 
-.goal-editor-form > label { color: #e6d6b5; }
+.goal-editor-form > label { color: #fff0bd; }
+.goal-editor-hint { color: #c2b195; }
+.goal-editor-cancel { color: #c2b195; }
+.goal-editor-cancel:hover:not(:disabled) { color: #fff0bd; border-color: #b89764; }
 
 .study-skeleton {
   background: linear-gradient(100deg, rgb(246 239 208 / 4%) 25%, rgb(249 115 22 / 9%) 50%, rgb(246 239 208 / 4%) 75%);

@@ -30,7 +30,7 @@ export default function StreakView({
     : goalValue < 5
       ? "You can do better than that."
       : goalValue < 10
-        ? "A nice start—10 is the sweet spot!"
+        ? "A nice start. 10 is the sweet spot!"
         : goalValue === 10
           ? "10 is the sweet spot!"
           : goalValue === 30
@@ -113,11 +113,11 @@ export default function StreakView({
                   <button type="submit" className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900">
                     Save goal
                   </button>
-                  <button type="button" onClick={() => { setGoal(String(view.daily_goal)); setEditingGoal(false); }} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-300 hover:border-stone-500">
+                  <button type="button" onClick={() => { setGoal(String(view.daily_goal)); setEditingGoal(false); }} className="goal-editor-cancel rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:border-stone-500">
                     Cancel
                   </button>
                 </div>
-                <p className="text-xs text-stone-500">Set a goal between 2 and 30 reviews. 10 is Sparky’s sweet spot.</p>
+                <p className="goal-editor-hint text-xs">Set a goal between 2 and 30 reviews. 10 is Sparky’s sweet spot.</p>
               </form>
             </div>
           </div>
