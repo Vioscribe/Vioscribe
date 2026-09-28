@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { createStudyRoom, joinStudyRoom } from "@/app/actions";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type RoomRow = { id: string; code: string };
@@ -12,13 +12,12 @@ export default async function RoomsPage({
 }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const userId = await requireUserId();
 
   const { data: memberships, error: membershipError } = await supabase
     .from("room_members")
     .select("room_id")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .is("left_at", null);
   if (membershipError) throw new Error(membershipError.message);
 

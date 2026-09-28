@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { renameNote } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
 import NotesEditor from "@/components/NotesEditor";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function NotePage({
@@ -14,15 +15,14 @@ export default async function NotePage({
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  const userId = await requireUserId();
 
   const [{ data: note, error }, { data: files }] = await Promise.all([
     supabase
       .from("notes")
       .select("id, title, content, file_id, updated_at")
       .eq("id", id)
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .maybeSingle(),
     supabase.from("files").select("id, title").order("title"),
   ]);

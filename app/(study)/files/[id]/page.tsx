@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createDeck, createNote, deleteFile } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type Limits = { max_files: number | null; max_items_per_file: number | null };
@@ -15,14 +16,13 @@ export default async function FilePage({
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  const userId = await requireUserId();
 
   const [{ data: file, error: fileError }, filesResult, notesResult, decksResult, limitsResult] = await Promise.all([
-    supabase.from("files").select("id, title, created_at").eq("id", id).eq("user_id", user.id).maybeSingle(),
-    supabase.from("files").select("id, title").eq("user_id", user.id).order("title"),
-    supabase.from("notes").select("id, title, file_id, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }),
-    supabase.from("decks").select("id, title, file_id, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
+    supabase.from("files").select("id, title, created_at").eq("id", id).eq("user_id", userId).maybeSingle(),
+    supabase.from("files").select("id, title").eq("user_id", userId).order("title"),
+    supabase.from("notes").select("id, title, file_id, updated_at").eq("user_id", userId).order("updated_at", { ascending: false }),
+    supabase.from("decks").select("id, title, file_id, created_at").eq("user_id", userId).order("created_at", { ascending: false }),
     supabase.rpc("get_my_filing_limits"),
   ]);
 

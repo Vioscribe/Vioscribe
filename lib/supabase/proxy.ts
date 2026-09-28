@@ -1,7 +1,16 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/decks", "/notes", "/streak", "/friends", "/rooms", "/heatmap"];
+const PROTECTED_PREFIXES = [
+  "/decks",
+  "/notes",
+  "/files",
+  "/streak",
+  "/friends",
+  "/rooms",
+  "/heatmap",
+  "/profile",
+];
 
 // Refresh the auth cookie on every request and gate study pages behind login
 export async function updateSession(request: NextRequest) {
@@ -36,20 +45,19 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getClaims();
+  const isAuthenticated = Boolean(data?.claims.sub);
 
   const path = request.nextUrl.pathname;
   const needsAuth = PROTECTED_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
 
-  if (needsAuth && !user) {
+  if (needsAuth && !isAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (path === "/login" && user) {
+  if (path === "/login" && isAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/decks";
     return NextResponse.redirect(url);

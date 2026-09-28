@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { leaveStudyRoom } from "@/app/actions";
 import Leaderboard from "@/components/Leaderboard";
 import LeaderboardTabs from "@/components/LeaderboardTabs";
 import PersonalTimer from "@/components/PersonalTimer";
 import RoomPresence from "@/components/RoomPresence";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type BoardRow = { user_id: string; display_name: string; minutes_studied: number; cards_reviewed: number };
@@ -19,14 +20,13 @@ export default async function StudyRoomPage({
   const { id } = await params;
   const query = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const userId = await requireUserId();
 
   const [roomResult, profileResult, decksResult, timerResult, boardResult] = await Promise.all([
     supabase.from("rooms").select("id, code").eq("id", id).single(),
-    supabase.from("profiles").select("display_name").eq("id", user.id).single(),
+    supabase.from("profiles").select("display_name").eq("id", userId).single(),
     supabase.from("decks").select("id, title").order("created_at", { ascending: false }),
-    supabase.from("personal_timers").select("*").eq("user_id", user.id).maybeSingle(),
+    supabase.from("personal_timers").select("*").eq("user_id", userId).maybeSingle(),
     supabase.rpc("room_leaderboard", { target_room_id: id }),
   ]);
   if (roomResult.error || !roomResult.data) notFound();
@@ -53,8 +53,8 @@ export default async function StudyRoomPage({
 
       {query.error && <p role="alert" className="text-sm text-red-700">{query.error}</p>}
 
-      <RoomPresence roomId={room.id} userId={user.id} displayName={profileResult.data?.display_name ?? "Student"} />
-      <PersonalTimer initialTimer={timerResult.data} userId={user.id} roomId={room.id} />
+      <RoomPresence roomId={room.id} userId={userId} displayName={profileResult.data?.display_name ?? "Student"} />
+      <PersonalTimer initialTimer={timerResult.data} userId={userId} roomId={room.id} />
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium">Study from a deck</h2>
@@ -75,7 +75,7 @@ export default async function StudyRoomPage({
           <h2 className="text-lg font-medium">Room leaderboard</h2>
           <p className="text-xs text-stone-500">Today in this room · UTC</p>
         </div>
-        <Leaderboard entries={board} currentUserId={user.id} period="today" roomId={room.id} />
+        <Leaderboard entries={board} currentUserId={userId} period="today" roomId={room.id} />
       </section>
     </div>
   );

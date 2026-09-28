@@ -5,16 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function DecksPage() {
   const supabase = await createClient();
-  const { data: decks } = await supabase
-    .from("decks")
-    .select("id, title, created_at")
-    .order("created_at", { ascending: false });
-  const [{ data: files }, { data: deckFileRefs }] = await Promise.all([
+  const [{ data: decks }, { data: files }] = await Promise.all([
+    supabase
+      .from("decks")
+      .select("id, title, created_at, file_id")
+      .order("created_at", { ascending: false }),
     supabase.from("files").select("id, title").order("title"),
-    supabase.from("decks").select("id, file_id"),
   ]);
   const fileTitles = new Map((files ?? []).map((file) => [file.id, file.title]));
-  const deckFileIds = new Map((deckFileRefs ?? []).map((row) => [row.id, row.file_id]));
 
   return (
     <div className="space-y-8">
@@ -52,8 +50,8 @@ export default async function DecksPage() {
             </Link>
             <div className="flex flex-wrap items-center justify-end gap-3">
               <div className="text-right">
-                <p className="text-xs text-stone-500">{deckFileIds.get(deck.id) ? `Filed in ${fileTitles.get(deckFileIds.get(deck.id)!) ?? "a file"}` : "Unfiled"}</p>
-                {deckFileRefs && files && <FileItemMoveForm item={{ ...deck, file_id: deckFileIds.get(deck.id) ?? null }} kind="deck" files={files} returnTo="/decks" />}
+                <p className="text-xs text-stone-500">{deck.file_id ? `Filed in ${fileTitles.get(deck.file_id) ?? "a file"}` : "Unfiled"}</p>
+                {decks && files && <FileItemMoveForm item={deck} kind="deck" files={files} returnTo="/decks" />}
               </div>
               <form action={deleteDeck}>
                 <input type="hidden" name="id" value={deck.id} />

@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
 import { addFriendByCode, respondToFriendRequest } from "@/app/actions";
 import Leaderboard from "@/components/Leaderboard";
 import LeaderboardTabs from "@/components/LeaderboardTabs";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type FriendRow = { friend_id: string; display_name: string };
@@ -20,13 +20,10 @@ export default async function FriendsPage({
 }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const userId = await requireUserId();
 
   const [profileResult, friendsResult, requestsResult, leaderboardResult] = await Promise.all([
-    supabase.from("profiles").select("friend_code").eq("id", user.id).single(),
+    supabase.from("profiles").select("friend_code").eq("id", userId).single(),
     supabase.rpc("list_friends"),
     supabase.rpc("list_friend_requests"),
     supabase.rpc("weekly_friends_leaderboard"),
@@ -130,7 +127,7 @@ export default async function FriendsPage({
           <h2 className="text-lg font-medium">Weekly leaderboard</h2>
           <p className="text-xs text-stone-500">Minutes from study timer sessions or cards reviewed since Monday 00:00 UTC.</p>
         </div>
-        <Leaderboard entries={leaderboard} currentUserId={user.id} period="week" />
+        <Leaderboard entries={leaderboard} currentUserId={userId} period="week" />
       </section>
     </div>
   );

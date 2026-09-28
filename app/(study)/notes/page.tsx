@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createNote, deleteNote } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
 import NotesEditor from "@/components/NotesEditor";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function NotesPage({
@@ -11,14 +12,13 @@ export default async function NotesPage({
 }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  const userId = await requireUserId();
 
   const [{ data: notes, error }, { data: files }] = await Promise.all([
     supabase
       .from("notes")
       .select("id, title, file_id, updated_at")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .order("updated_at", { ascending: false }),
     supabase.from("files").select("id, title").order("title"),
   ]);
@@ -27,7 +27,7 @@ export default async function NotesPage({
     const { data: legacyNote } = await supabase
       .from("notes")
       .select("content")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .maybeSingle();
     return (
       <div className="space-y-5">

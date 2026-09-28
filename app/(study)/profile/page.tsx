@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
 import { saveClassroomBadgeColor } from "@/app/actions";
 import ProfileBadges from "@/components/ProfileBadges";
 import FlameIcon from "@/components/FlameIcon";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type ProfileSummary = {
@@ -21,8 +21,7 @@ export default async function ProfilePage({
 }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  await requireUserId();
 
   const { data, error } = await supabase.rpc("my_profile_badges");
   if (error) throw new Error(error.message);

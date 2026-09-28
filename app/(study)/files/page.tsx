@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CreateFileForm from "@/components/CreateFileForm";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type Limits = { max_files: number | null; max_items_per_file: number | null };
@@ -25,17 +26,12 @@ export default async function FilesPage({
 }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  // Check the new table first so users see a clear message until its SQL is applied.
-  const { error: filesError } = await supabase.from("files").select("id").limit(1);
-  if (filesError) return <MigrationNotice />;
+  const userId = await requireUserId();
 
   const [filesResult, notesResult, decksResult, limitsResult] = await Promise.all([
-    supabase.from("files").select("id, title, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
-    supabase.from("notes").select("id, title, file_id, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }),
-    supabase.from("decks").select("id, title, file_id, created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
+    supabase.from("files").select("id, title, created_at").eq("user_id", userId).order("created_at", { ascending: false }),
+    supabase.from("notes").select("id, title, file_id, updated_at").eq("user_id", userId).order("updated_at", { ascending: false }),
+    supabase.from("decks").select("id, title, file_id, created_at").eq("user_id", userId).order("created_at", { ascending: false }),
     supabase.rpc("get_my_filing_limits"),
   ]);
 

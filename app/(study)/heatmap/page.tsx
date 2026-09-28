@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import PersonalTimer from "@/components/PersonalTimer";
+import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 const cellColors = [
@@ -12,8 +12,7 @@ const cellColors = [
 
 export default async function HeatmapPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const userId = await requireUserId();
 
   const currentMonth = new Date();
   const year = currentMonth.getUTCFullYear();
@@ -26,10 +25,10 @@ export default async function HeatmapPage() {
   const monthLabel = first.toLocaleString("en-GB", { month: "long", timeZone: "UTC" });
 
   const [profileResult, reviewsResult, sessionsResult, timerResult] = await Promise.all([
-    supabase.from("profiles").select("current_streak").eq("id", user.id).single(),
-    supabase.from("study_reviews").select("reviewed_at").eq("user_id", user.id).gte("reviewed_at", firstIso).lt("reviewed_at", nextIso),
-    supabase.from("study_sessions").select("started_at, duration_seconds").eq("user_id", user.id).gte("started_at", firstIso).lt("started_at", nextIso),
-    supabase.from("personal_timers").select("*").eq("user_id", user.id).maybeSingle(),
+    supabase.from("profiles").select("current_streak").eq("id", userId).single(),
+    supabase.from("study_reviews").select("reviewed_at").eq("user_id", userId).gte("reviewed_at", firstIso).lt("reviewed_at", nextIso),
+    supabase.from("study_sessions").select("started_at, duration_seconds").eq("user_id", userId).gte("started_at", firstIso).lt("started_at", nextIso),
+    supabase.from("personal_timers").select("*").eq("user_id", userId).maybeSingle(),
   ]);
   for (const result of [profileResult, reviewsResult, sessionsResult, timerResult]) {
     if (result.error) throw new Error(result.error.message);
@@ -69,7 +68,7 @@ export default async function HeatmapPage() {
         <p className="text-sm">Current streak: <strong className="font-mono text-amber-700">{profileResult.data?.current_streak ?? 0} days</strong></p>
       </header>
 
-      <PersonalTimer initialTimer={timerResult.data} userId={user.id} />
+      <PersonalTimer initialTimer={timerResult.data} userId={userId} />
 
       <section className="space-y-4 rounded-xl border border-stone-200 bg-white p-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
