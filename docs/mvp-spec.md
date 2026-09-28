@@ -25,30 +25,31 @@ This is not a fresh project — there's an existing codebase and GitHub repo alr
 - Deploy on Netlify
 - Row Level Security on every table so users can only access their own data or data shared with them
 
-## Current build status (commit bb6d962)
-This section is the working snapshot from the build tool (Codex/Claude Code) as of the most recent check-in — kept here so this spec stays the single source of truth.
+## Current build status (code snapshot: 17bd3c8, checked 29 September 2026)
+This section records verified project status. The current `main` branch is at `17bd3c8`; the live Netlify site was last published from `12b74d2` because later production deploys were skipped after the team exhausted its available deploy credits. See the deployment note below.
 
 **Implemented in code:**
 - Core study loop: auth (email/password + Google), profile creation with friend code, decks/cards CRUD, flashcard review with spaced repetition, TipTap notes editor with autosave, daily goal + streak tracking (now also tracking `longest_streak`).
+- Daily goal editing: users can choose 2–30 reviews per day; Sparky’s message changes with the selected goal. The daily-goal range migration was applied in Supabase, as confirmed by the project owner. Goal-editor copy and controls use explicit high-contrast colors, and the goal messages avoid em dashes.
 - Friends and sharing: add-by-code friend requests, friends list, weekly friends leaderboard (minutes/cards toggle), shareable deck links with logged-out preview and "save a copy."
 - Rooms and activity: create/join rooms by code (4-member cap), live presence (via Realtime Presence, not Postgres Changes), personal (not room-synced) Pomodoro timer whose minutes feed room + friends leaderboards, room leaderboard, current-month heatmap, streak display, global leaderboard as a locked "Coming soon" placeholder.
 - UI/branding: ember/campfire palette and monospace styling site-wide, one-time reduced-motion-aware campfire ignition on first landing visit, pixel-art mascot ("Sparky") with cursor-tracking eyes and click interactions.
 - Filing system: `files` table with RLS, nullable `file_id` on `notes` and `decks`, a pixel-art Filing Room tab for browsing files and their contents, and the free/paid file-count and items-per-file limits enforced in one central place.
 - A Realtime bug in the personal timer (an invalid `user_id` filter) was found and fixed in `bb6d962` — code-only fix, no migration needed; Supabase logs showed clean (0 errors) after the fix.
-- **Built ahead of spec, needs a scope decision:** a badge system — streak-milestone badges (10/25/50/100/250/500/1000+), a "First 100" badge, a developer badge, and locked Pro/Classroom Pro badge placeholders in the profile menu. This wasn't in the original spec; it's cosmetic and doesn't conflict with the no-AI/no-payments rules, but decide whether to keep it in the MVP or trim it before launch (see the note under Monthly badges below either way, since "First 100" has a data-permanence issue worth fixing if it stays).
+- **Badge scope decision made:** keep the existing badge system. The "First 100" award is stored permanently at signup; see the Track B status and the badge implementation notes below. Streak-milestone and developer badges, plus locked Pro/Classroom Pro placeholders, are also implemented.
 
-**Release blockers still open before this can launch (not yet confirmed working, or not yet done):**
-1. Email deliverability — a second test account did not receive its signup confirmation email; likely Supabase's built-in email rate limit. Needs a real SMTP provider wired into Supabase Auth. Also verify Google OAuth against the actual dev and production callback URLs.
-2. Two-account collaboration has not been confirmed end-to-end with two real accounts — specifically friend request/accept, friends leaderboard, shared-deck preview/copy, room join/presence, and personal-timer minutes correctly reaching both the room and friends leaderboards.
-3. Migration state on the live Supabase project hasn't been directly confirmed — a recent log export showed old permission/missing-column errors, but couldn't establish whether that was stale or current. Confirm required columns, functions, policies and grants actually exist in the live project rather than assuming from migration files.
-4. RLS has been addressed in code but needs re-verification against the live production Supabase project, not just locally.
-5. No production deployment or domain yet; Supabase Auth URLs and Google OAuth redirect URIs still need updating for whatever domain is used.
-6. No Privacy Policy, Terms, or contact page yet — footer currently shows a placeholder ("Contact email pending").
-7. No custom 404 page yet.
-8. `README.md` is still the default Next.js starter — needs real setup instructions, `.env.local` variable names (never values), migration order, and run commands.
-9. A full pre-launch security checklist (key handling, field-level tamper protection, session cookie config, bot protection, output sanitization for the notes editor, response trimming, security headers, dependency scanning) — see `docs/security/security-checklist.md` for the complete list.
+**Current production deployment:** Vioscribe is live at [vioscribe.netlify.app](https://vioscribe.netlify.app/). Netlify reports that production deploys are paused because the team used all available credits for the current billing period (25 September–24 October 2026). The billing page shows the next period beginning 25 October 2026. Commits `70e7735` and `17bd3c8` are on GitHub `main` but were skipped by Netlify, so the live site is still on `12b74d2`. Netlify says published sites remain live while production deploys are paused. Track A owns restoring deployment after credits reset or the project owner changes the plan.
 
-These nine items are the actual remaining gate to launch — everything else in this spec beyond them is either already built or explicitly out of scope below.
+**Remaining launch gates (checked 29 September 2026):**
+1. Confirm signup email delivery and Google OAuth against the configured development and production callback URLs.
+2. Complete two-account end-to-end verification for friend requests, friends leaderboard, shared-deck preview/copy, room join/presence, and timer minutes flowing to the room and friends leaderboards.
+3. Confirm the full live Supabase migration state and re-audit production RLS. The daily-goal range migration was applied and confirmed by the project owner; that does not verify every migration or policy.
+4. Deploy the latest `main` to production once Netlify allows production deploys again; verify production environment variables and auth redirects.
+5. Resolve the legal and child-safety launch blockers in `docs/legal/compliance-readiness.md`. The public Privacy and Terms pages and contact address exist, but their factual/legal review is incomplete. The operator’s public address remains an explicit launch blocker at the owner’s request.
+6. Complete the security review in `docs/security/security-checklist.md`, including checks against the production configuration.
+7. Decide and scope the deferred safety features (report/block and age-appropriate signup/access measures) before treating the service as ready for students.
+
+The checklist above replaces earlier launch-status notes that incorrectly described the live deployment, legal pages, custom 404, and README as absent.
 
 ## Pages
 1. **Landing / login:** short pitch, sign up, log in.
@@ -160,7 +161,7 @@ All three leaderboards (friends, room-wide, global) use the same two ranking met
 
 **Separate from the above — streak-milestone and "First 100" badges (already built, not originally in this spec):**
 - Streak-milestone badges at 10/25/50/100/250/500/1000+ days, awarded automatically from `longest_streak`.
-- A "First 100" badge for early signups — currently computed by ranking `profiles` by `created_at`/id rather than stored as a permanent flag, so deleting a test account could shift who counts as "first 100." Fix this (store it as an immutable flag at signup time) before real public signups if the badge is being kept.
+- The "First 100" badge is stored as a permanent flag at signup, so deleting a profile does not shift the award. The project owner chose to keep the badge system.
 - A developer badge tied to an `is_developer` flag on `profiles`, currently the only way Pro/Classroom Pro badges show as available (in approved developer builds) — normal MVP accounts see Pro/Classroom Pro badges as locked in the profile menu, not forced next to usernames elsewhere in the app.
 
 ## Profile customisation (post-MVP — good to build once the core loop is validated, not needed for launch)

@@ -6,20 +6,20 @@ Give this alongside the current `mvp-spec.md` — that file is the canonical sou
 Vioscribe is a study web app for students: notes → flashcards → spaced-repetition review → daily streaks → social study features (friends, shared decks, study rooms with leaderboards). No AI features on any plan, ever — that's a firm, non-negotiable product decision, not a placeholder.
 
 ## Repo and stack
-- Private GitHub repo: `Turbulentmonk/Vioscribe`, branch `main`, latest commit `bb6d962`.
+- GitHub repo: `Vioscribe/Vioscribe`, branch `main`. Use `git status` and the current branch head for the latest code; this brief was checked against `17bd3c8` on 29 September 2026.
 - Next.js 16 (App Router) + TypeScript + Tailwind CSS 4.
 - Supabase: Postgres, Auth (email + Google), Realtime (Presence for rooms), Row Level Security on every table.
 - TipTap for the notes editor.
-- Deploy target: Netlify (not yet live in production).
+- Production site: [https://vioscribe.netlify.app](https://vioscribe.netlify.app), hosted on Netlify.
 - Secrets live in `.env.local` (gitignored) — ask the project owner for actual values, never hardcode or guess a key.
 - The repo has its own `AGENTS.md` / `CLAUDE.md` files with tool-specific working instructions — read those too before making changes.
 
 ## Where things stand right now
 The core product loop is built: auth, decks/cards, review with spaced repetition, notes, streaks, friends + friends leaderboard, shareable deck links, study rooms with a personal (not synced) timer whose minutes feed both room and friends leaderboards, a current-month heatmap, and full ember/campfire branding with a pixel-art mascot. A global platform-wide leaderboard exists only as a locked "Coming soon" placeholder — real ranking logic is a future paid-tier feature, not built yet.
 
-This is **not launch-ready yet**. `mvp-spec.md`'s "Current build status" section lists the exact remaining gates — email deliverability, two-account end-to-end testing, confirming what's actually live on the production Supabase project vs. just in migration files, an RLS re-audit against production, deployment + domain, legal/contact pages, a custom 404 page, and replacing the default Next.js README. Read that section before assuming anything is "done."
+This is **not launch-ready yet**. Check `mvp-spec.md` for current release gates. The live Netlify site is still on commit `12b74d2`: Netlify skipped the newer `main` commits because the team exhausted its production deploy credits for the current billing period (25 September–24 October 2026). The next period starts 25 October 2026. Do not assume a successful GitHub push means the production site was updated.
 
-A badge system (streak milestones, a "First 100" badge, a developer badge, locked Pro/Classroom Pro badge placeholders) was recently built ahead of the original spec. It's noted in `mvp-spec.md` as a pending scope decision — don't assume it's fully signed off, and note it has one known data-integrity issue (the "First 100" badge isn't stored as a permanent flag yet).
+A badge system (streak milestones, a permanently recorded "First 100" badge, a developer badge, and locked Pro/Classroom Pro placeholders) is implemented and its scope was approved: keep it.
 
 A **filing system** (user-created "files" that group notes and decks, browsed via a pixel-art "Filing Room" tab, with tiered file/item limits) is now built — `files` table with RLS, `file_id` on `notes`/`decks`, the Filing Room UI, and the tier limits are all in place.
 
@@ -34,7 +34,7 @@ A **filing system** (user-created "files" that group notes and decks, browsed vi
 - No payments/Stripe until explicitly scoped (gating hooks only for now).
 - No photo uploads anywhere — preset avatars only, since the user base includes under-18s.
 - Site-wide clean monospace/terminal typeface and warm ember/campfire branding — not a gimmicky "hacker" theme.
-- The project owner is 16 (UK); any publicly-visible email in code, commits, or config should be their GitHub noreply address, not a personal one — ask them for it if it's needed.
+- Use `vioscribe.support@gmail.com` as the approved public support contact. Do not publish other personal contact details without the project owner’s approval.
 
 ## Getting started
 1. Read `mvp-spec.md` in full, then this document.
