@@ -34,7 +34,8 @@ export default function PersonalTimer({
   roomId?: string;
 }) {
   const [timer, setTimer] = useState<TimerRow | null>(initialTimer);
-  const [now, setNow] = useState(0);
+  // Keep the server render stable; initialize the browser clock after hydration.
+  const [now, setNow] = useState<number | null>(null);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const advancing = useRef(false);
@@ -84,9 +85,11 @@ export default function PersonalTimer({
     };
   }, [userId]);
 
+  const defaultPhaseLength = timer?.timer_phase === "break" ? 300 : 1500;
   const remaining = timer?.timer_state === "paused"
     ? timer.seconds_left
-    : timer?.ends_at ? Math.max(0, (Date.parse(timer.ends_at) - now) / 1000) : 1500;
+    : now === null ? defaultPhaseLength
+      : timer?.ends_at ? Math.max(0, (Date.parse(timer.ends_at) - now) / 1000) : defaultPhaseLength;
 
   useEffect(() => {
     if (timer?.timer_state !== "paused" && remaining <= 0) {

@@ -1,6 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { applyDayRollover, applyReview } from "@/lib/streak";
@@ -379,7 +380,10 @@ export async function saveNotes(noteId: string, content: string) {
 }
 
 export async function saveDailyGoal(formData: FormData) {
-  const goal = Math.max(1, Number(formData.get("daily_goal") || 10));
+  const goal = Number(formData.get("daily_goal"));
+  if (!Number.isInteger(goal) || goal < 2 || goal > 30) {
+    redirect("/streak?error=invalid");
+  }
   const today = todayFromForm(formData);
   const supabase = await createClient();
   const {
@@ -387,7 +391,7 @@ export async function saveDailyGoal(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select(
       "id, display_name, friend_code, daily_goal, reviews_today, reviews_date, current_streak, last_goal_date",
@@ -395,14 +399,14 @@ export async function saveDailyGoal(formData: FormData) {
     .eq("id", user.id)
     .single();
 
-  if (!profile) return;
+  if (profileError || !profile) redirect("/streak?error=save");
 
   const rolled = applyDayRollover({ ...(profile as Profile), daily_goal: goal }, today);
   if (rolled.reviews_today >= goal && rolled.last_goal_date !== today) {
     rolled.current_streak += 1;
     rolled.last_goal_date = today;
   }
-  await supabase
+  const { data: updatedProfile, error: updateError } = await supabase
     .from("profiles")
     .update({
       daily_goal: goal,
@@ -411,7 +415,13 @@ export async function saveDailyGoal(formData: FormData) {
       current_streak: rolled.current_streak,
       last_goal_date: rolled.last_goal_date,
     })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .select("id")
+    .maybeSingle();
+
+  if (updateError || !updatedProfile) redirect("/streak?error=save");
+  revalidatePath("/streak");
+  redirect("/streak?saved=1");
 }
 
 export async function saveClassroomBadgeColor(formData: FormData) {

@@ -3,7 +3,12 @@ import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 
-export default async function StreakPage() {
+export default async function StreakPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; saved?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
   const userId = await requireUserId();
 
@@ -17,5 +22,13 @@ export default async function StreakPage() {
 
   if (!profile) return <p>Profile not found. Try signing out and back in.</p>;
 
-  return <StreakView profile={profile as Profile} />;
+  const result = params.saved === "1"
+    ? "saved"
+    : params.error === "invalid"
+      ? "invalid"
+      : params.error === "save"
+        ? "error"
+        : undefined;
+
+  return <StreakView key={params.saved ?? params.error ?? "current"} profile={profile as Profile} result={result} />;
 }

@@ -29,7 +29,8 @@ export default function CreateFileForm() {
           required
           minLength={1}
           maxLength={32}
-          pattern=".*\\S.*"
+          // Use a JavaScript string so the HTML pattern receives one `\S` escape.
+          pattern={".*\\S.*"}
           placeholder="e.g. Biology revision"
           aria-describedby={error ? "file-title-error" : "file-title-hint"}
           className="min-w-0 flex-1 rounded border border-stone-300 bg-white px-3 py-2 text-sm"

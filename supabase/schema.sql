@@ -12,7 +12,7 @@ create table public.profiles (
   plan text not null default 'free'
     check (plan in ('free', 'pro', 'classroom_pro')),
   -- Daily study goal (number of card reviews) and streak tracking
-  daily_goal int not null default 10,
+  daily_goal int not null default 10 check (daily_goal between 2 and 30),
   reviews_today int not null default 0,
   reviews_date date,
   current_streak int not null default 0,

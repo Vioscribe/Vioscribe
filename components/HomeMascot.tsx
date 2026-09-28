@@ -12,7 +12,17 @@ type EmberPixel = {
 };
 type ClickSpark = { x: string; y: string; dx: string; dy: string; size: string; duration: string; rotation: string };
 
-export default function HomeMascot({ greeting = false }: { greeting?: boolean }) {
+export default function HomeMascot({
+  greeting = false,
+  message,
+  placement = "fixed",
+  interactive = true,
+}: {
+  greeting?: boolean;
+  message?: string;
+  placement?: "fixed" | "inline";
+  interactive?: boolean;
+}) {
   const mascotRef = useRef<HTMLButtonElement>(null);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -249,9 +259,9 @@ export default function HomeMascot({ greeting = false }: { greeting?: boolean })
       <button
         ref={mascotRef}
         type="button"
-        disabled={exploding}
-        className={`home-mascot mood-${mood} tap-${tapSequence % 2 ? "odd" : "even"}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
-        aria-label={greeting ? "Sparky says: Hi, I'm Sparky, welcome to Vioscribe" : "Wave to the little ember"}
+        disabled={!interactive || exploding}
+        className={`home-mascot${placement === "inline" ? " home-mascot--inline" : ""} mood-${mood} tap-${tapSequence % 2 ? "odd" : "even"}${pleased ? " is-pleased" : ""}${annoyed ? " is-annoyed" : ""}${spark ? " is-sparking" : ""}${exploding ? " is-exploding" : ""}`}
+        aria-label={message ? `Sparky says: ${message}` : greeting ? "Sparky says: Hi, I'm Sparky, welcome to Vioscribe" : "Wave to the little ember"}
         onPointerEnter={() => {
           setIdleMessage(false);
           hoverTimer.current = setTimeout(() => setPleased(true), 450);
@@ -265,7 +275,9 @@ export default function HomeMascot({ greeting = false }: { greeting?: boolean })
           react();
         }}
       >
-        {greeting && !exploding ? (
+        {message && !exploding ? (
+          <span className="mascot-dialogue mascot-dialogue--goal">{message}</span>
+        ) : greeting && !exploding ? (
           <span className="mascot-dialogue mascot-dialogue--welcome" aria-hidden="true">
             Hi, I&apos;m Sparky, welcome to Vioscribe!
           </span>
