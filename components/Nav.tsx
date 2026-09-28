@@ -1,17 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "@/app/actions";
+import ResponsiveNavLinks from "@/components/ResponsiveNavLinks";
 
-const links = [
-  { href: "/decks", label: "Decks" },
-  { href: "/notes", label: "Notes" },
-  { href: "/files", label: "Filing Room" },
-  { href: "/streak", label: "Streak" },
-  { href: "/friends", label: "Friends" },
-  { href: "/rooms", label: "Rooms" },
-  { href: "/heatmap", label: "Activity" },
-  { href: "/profile", label: "Profile" },
-];
+
 
 export default function Nav({ displayName }: { displayName: string }) {
   return (
@@ -27,22 +19,4 @@ export default function Nav({ displayName }: { displayName: string }) {
             priority
           />
         </Link>
-        <nav className="site-nav-links">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href}>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="site-nav-account">
-          <span className="site-nav-name">{displayName}</span>
-          <form action={signOut}>
-            <button type="submit">
-              Sign out
-            </button>
-          </form>
-        </div>
-      </div>
-    </header>
-  );
-}
+        <ResponsiveNavLinks />
