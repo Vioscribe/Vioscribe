@@ -838,12 +838,10 @@ a:hover {
   width: 3.2rem;
   height: 3.2rem;
   place-items: center;
-  clip-path: polygon(36% 0, 62% 0, 62% 16%, 78% 16%, 78% 32%, 90% 32%, 90% 72%, 75% 72%, 75% 90%, 25% 90%, 25% 74%, 10% 74%, 10% 43%, 24% 43%, 24% 23%, 36% 23%);
-  background: #c44310;
-  color: #fff0a2;
-  font-size: 1.1rem;
-  text-shadow: 0 0 8px #ffbd37;
+  color: #ff9b32;
+  filter: drop-shadow(0 0 0.4rem rgb(255 119 26 / 40%));
 }
+.profile-streak-flame svg { width: 2.55rem; height: 3rem; }
 .profile-streak-number { color: #ffe477; font-size: 1.75rem; font-weight: 700; line-height: 1.15; }
 .profile-streak-number span { color: #b5a487; font-size: 0.8rem; font-weight: 400; }
 .profile-badge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0.7rem; padding: 0; list-style: none; }
@@ -870,13 +868,12 @@ a:hover {
   background: color-mix(in srgb, var(--badge-color) 16%, #100d0a);
   color: var(--badge-color);
   box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--badge-color) 58%, transparent), 2px 2px 0 #090706;
-  image-rendering: pixelated;
 }
 .profile-badge-mark svg { width: 1.7rem; height: 1.7rem; }
 .dev-badge-slash { color: #ff3939; font-size: 2.2rem; font-weight: 700; line-height: 1; text-shadow: 2px 2px 0 #650d0d; }
 .first-hundred-mark { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.11em; text-shadow: 2px 2px 0 #136b68; }
 .streak-badge-mark { position: relative; display: grid; place-items: center; }
-.streak-badge-mark svg { width: 2rem; height: 2rem; }
+.streak-badge-mark svg { width: 1.65rem; height: 1.9rem; filter: drop-shadow(0 0 0.18rem rgb(255 137 36 / 35%)); }
 .streak-badge-mark b { position: absolute; bottom: -0.1rem; right: -0.45rem; border: 1px solid currentColor; background: #110d0a; padding: 0 0.12rem; font-size: 0.48rem; line-height: 1.2; }
 .profile-badge-copy { position: relative; z-index: 1; display: grid; min-width: 0; gap: 0.25rem; }
 .profile-badge-copy strong { color: #f4e6bf; font-size: 0.75rem; }

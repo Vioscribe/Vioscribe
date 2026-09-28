@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { saveClassroomBadgeColor } from "@/app/actions";
 import ProfileBadges from "@/components/ProfileBadges";
+import FlameIcon from "@/components/FlameIcon";
 import { createClient } from "@/lib/supabase/server";
 
 type ProfileSummary = {
@@ -37,7 +38,7 @@ export default async function ProfilePage({
       </header>
 
       <section className="profile-streak-panel" aria-label="Study streak">
-        <div className="profile-streak-flame" aria-hidden="true">✦</div>
+        <div className="profile-streak-flame"><FlameIcon /></div>
         <div>
           <p className="profile-kicker">CURRENT STREAK</p>
           <p className="profile-streak-number">{profile.current_streak}<span> days</span></p>

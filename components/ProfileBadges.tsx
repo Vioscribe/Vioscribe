@@ -1,3 +1,5 @@
+import FlameIcon from "@/components/FlameIcon";
+
 type Badge = {
   id: string;
   title: string;
@@ -9,15 +11,6 @@ type Badge = {
 };
 
 function PixelMark({ mark, color }: { mark: string; color: string }) {
-  const streakShapes: Record<string, string> = {
-    "10": "M14 3h4v6h4v5h4v8h-4v5H10v-4H6v-8h4v-6h4z",
-    "25": "M5 21h22v5H5z M8 19v-6h4V8h4v5h3V6h4v8h3v5z",
-    "50": "M4 22h5v-7h4v7h3V11h4v11h3v-7h4v7h2v5H4z M15 7h3v4h-3z",
-    "100": "M3 8h6v5h5v5h4v-5h5V8h6v10h-4v7H7v-7H3z M12 4h3v4h-3z M19 4h3v4h-3z",
-    "250": "M13 2h6v5h5v5h5v7h-5v6h-4v5h-8v-5H8v-6H3v-7h5V7h5z M15 12h3v6h3v4h-9v-4h3z",
-    "500": "M4 8h7v5h4v5h2v-5h4V8h7v9h-5v8h-5v4h-8v-4H7v-8H4z M14 3h4v5h-4z",
-    "1K": "M12 2h8v5h5v5h4v8h-5v6h-4v4h-9v-4H7v-6H3v-8h5V7h4z M15 11h4v4h3v5h-3v3h-7v-3h-3v-5h4v-3h2z",
-  };
   return (
     <span className="profile-badge-mark" style={{ "--badge-color": color } as React.CSSProperties} aria-hidden="true">
       {mark === "check" ? (
@@ -32,10 +25,7 @@ function PixelMark({ mark, color }: { mark: string; color: string }) {
         <span className="first-hundred-mark">100</span>
       ) : (
         <span className="streak-badge-mark">
-          <svg viewBox="0 0 32 32" shapeRendering="crispEdges">
-            <path d={streakShapes[mark] ?? streakShapes["10"]} fill="currentColor" />
-            <path d="M15 12h3v4h3v4h-3v3h-6v-3h-3v-4h3v-3h3z" fill="#fff2ba" opacity=".9" />
-          </svg>
+          <FlameIcon className="streak-flame-icon" />
           <b>{mark}</b>
         </span>
       )}
