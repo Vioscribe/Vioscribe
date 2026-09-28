@@ -73,7 +73,7 @@ export default function StreakView({
               if (!editingGoal) setGoal(String(view.daily_goal));
               setEditingGoal((editing) => !editing);
             }}
-            className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-100 hover:border-amber-500"
+            className="goal-editor-toggle rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:border-amber-500"
           >
             {editingGoal ? "Close editor" : "Change daily goal"}
           </button>
@@ -108,7 +108,7 @@ export default function StreakView({
                     name="daily_goal"
                     value={goal}
                     onChange={(event) => setGoal(event.target.value)}
-                    className="w-28 rounded-lg border border-stone-300 bg-white px-3 py-2"
+                    className="goal-editor-input w-28 rounded-lg border border-stone-300 px-3 py-2"
                   />
                   <button type="submit" className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900">
                     Save goal

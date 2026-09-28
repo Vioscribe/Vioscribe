@@ -1020,6 +1020,14 @@ a:hover {
 
 .goal-editor-form { display: grid; gap: 0.55rem; }
 
+.goal-editor-toggle { color: #ffd45c; }
+.goal-editor-input,
+.goal-editor-form input[name="daily_goal"] {
+  border-color: #8a6742;
+  background: #100d0a;
+  color: #fff0bd;
+  color-scheme: dark;
+}
 .goal-editor-form > label { color: #fff0bd; }
 .goal-editor-hint { color: #c2b195; }
 .goal-editor-cancel { color: #c2b195; }
