@@ -14,12 +14,6 @@ export default function LandingSlogan() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    try {
-      if (window.localStorage.getItem("hasSeenIntro")) return;
-    } catch {
-      // Play the intro for this visit when browser storage is unavailable.
-    }
-
     let count = 0;
     let interval: number | null = null;
     let finished = false;

@@ -41,3 +41,7 @@ See [`docs/mvp-spec.md`](docs/mvp-spec.md) for the full feature spec, data model
 4. After Netlify assigns the site URL, add `https://your-site.netlify.app/auth/callback` to the Supabase Auth redirect URL allowlist and set the production site URL in Supabase Auth. If Google sign-in is enabled, keep the Google OAuth redirect URI set to the Supabase callback URL shown in the Supabase provider settings.
 
 Netlify supports the Next.js App Router and provisions its Next.js adapter automatically. See [Netlify's Next.js guide](https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/) for current deployment details.
+
+## Legal and privacy review
+
+Draft Privacy and Terms copy and the pre-launch review checklist are in [`docs/legal/`](docs/legal/). They are working drafts, not a statement that Vioscribe is legally compliant. Do not publish them until the controller identity/contact, operating address, provider locations and transfer safeguards, and child-safety assessments have been confirmed.

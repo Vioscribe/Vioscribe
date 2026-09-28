@@ -22,12 +22,11 @@ Build one item at a time, in the numbered order below — fully finish and repor
 ## Your scope (work in this order)
 
 
-4. **Legal, contact, and docs**
-   - A short plain-language Privacy Policy: what's collected (email, study activity, friend connections), that there's no AI processing and no ad tracking, and roughly where data lives (Supabase).
-   - A short Terms/acceptable use page.
-   - A real contact method (replace the current "Contact email pending" placeholder with the GitHub noreply address I've already given you for anything public-facing).
-   - Link both pages from the site footer.
-   - Replace the default Next.js starter `README.md` with real setup instructions: how to run the project locally, `.env.local` variable names (never actual values), migration order, and run commands.
+4. **Legal, contact, and docs — in progress**
+   - Draft privacy and terms copy plus the UK legal/privacy readiness checklist are in `docs/legal/`.
+   - The public pages are not updated yet: the operator’s public identity/address, a monitored contact inbox, processor locations/transfers, and child-safety assessments remain unresolved. Do not mark complete or publish draft text until those facts are verified.
+   - ~~Replace the default starter README with Vioscribe setup and deploy instructions; link the existing Privacy and Terms pages from the footer.~~ **done.**
+   - Resolve the launch blockers in `docs/legal/compliance-readiness.md`, verify the public contact address is monitored, then replace the current public Privacy and Terms copy with the reviewed drafts.
 
 
 ## Stop here once items 1–4 are done — do not start these without asking

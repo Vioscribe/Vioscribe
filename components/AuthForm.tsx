@@ -11,12 +11,17 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [message, setMessage] = useState<string | null>(initialMessage);
   const [busy, setBusy] = useState(false);
   const router = useRouter();
 
   async function onEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "signup" && !acceptedTerms) {
+      setMessage("Please agree to the Terms of Use before creating an account.");
+      return;
+    }
     setBusy(true);
     setMessage(null);
     const supabase = createClient();
@@ -90,10 +95,25 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
         </h1>
       </div>
 
+      {mode === "signup" && (
+        <label className="flex items-start gap-2 text-xs leading-relaxed text-stone-600">
+          <input
+            type="checkbox"
+            required
+            checked={acceptedTerms}
+            onChange={(event) => setAcceptedTerms(event.target.checked)}
+            className="mt-0.5"
+          />
+          <span>
+            I agree to the <Link href="/terms" className="underline">Terms of Use</Link>. The <Link href="/privacy" className="underline">Privacy Policy</Link> explains how my information is used.
+          </span>
+        </label>
+      )}
+
       <button
         type="button"
         onClick={onGoogle}
-        disabled={busy}
+        disabled={busy || (mode === "signup" && !acceptedTerms)}
         className="inline-flex w-full items-center justify-center gap-2.5 rounded-lg border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium hover:bg-stone-50 disabled:opacity-60"
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
@@ -112,9 +132,7 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
 
       <form onSubmit={onEmailSubmit} className="space-y-3">
         {mode === "signup" && (
-          <p className="text-sm text-stone-500">
-            Your username will be generated automatically.
-          </p>
+          <p className="text-sm text-stone-500">Your username will be generated automatically.</p>
         )}
         <label className="block text-sm">
           Email
@@ -163,6 +181,7 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
         className="text-sm text-stone-500 underline"
         onClick={() => {
           setMode(mode === "login" ? "signup" : "login");
+          setAcceptedTerms(false);
           setMessage(null);
         }}
       >
