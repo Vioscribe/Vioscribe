@@ -3,8 +3,6 @@ import Image from "next/image";
 import { signOut } from "@/app/actions";
 import ResponsiveNavLinks from "@/components/ResponsiveNavLinks";
 
-
-
 export default function Nav({ displayName }: { displayName: string }) {
   return (
     <header className="site-nav">
@@ -20,3 +18,13 @@ export default function Nav({ displayName }: { displayName: string }) {
           />
         </Link>
         <ResponsiveNavLinks />
+        <div className="site-nav-account">
+          <span className="site-nav-name">{displayName}</span>
+          <form action={signOut}>
+            <button type="submit">Sign out</button>
+          </form>
+        </div>
+      </div>
+    </header>
+  );
+}

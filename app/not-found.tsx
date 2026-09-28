@@ -37,3 +37,12 @@ export default function NotFound() {
         <path d="M7 64h50v5H7z" fill="#4c2414" />
         <path d="M11 57h6v3h-6zm34 0h6v3h-6z" fill="#d57925" />
         <path d="M27 59h4v2h-4zm7 1h5v2h-5z" fill="#e98b2e" />
+        <path d="M1 29h3v3H1zm55-8h3v3h-3zm-4-12h3v3h-3z" fill="#ffd45c" />
+      </svg>
+      <p className="legal-kicker">404 / PATH_NOT_FOUND</p>
+      <h1>This trail went cold.</h1>
+      <p>That page isn’t here. Let’s head back to the campfire.</p>
+      <Link href="/" className="landing-cta">Back to Vioscribe <span aria-hidden="true">-&gt;</span></Link>
+    </main>
+  );
+}
