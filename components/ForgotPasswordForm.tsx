@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default function ForgotPasswordForm({
   initialEmail = "",
@@ -25,7 +26,7 @@ export default function ForgotPasswordForm({
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+        redirectTo: `${getSiteUrl()}/auth/callback?next=/reset-password`,
       });
       if (error) throw error;
       setSent(true);

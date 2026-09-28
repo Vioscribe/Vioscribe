@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteUrl } from "@/lib/site-url";
 import HomeMascot from "@/components/HomeMascot";
 
 export default function AuthForm({ initialMessage = null }: { initialMessage?: string | null }) {
@@ -31,7 +32,7 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${getSiteUrl()}/auth/callback`,
         },
       });
       setBusy(false);
@@ -62,7 +63,7 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${getSiteUrl()}/auth/callback`,
           skipBrowserRedirect: true,
         },
       });
