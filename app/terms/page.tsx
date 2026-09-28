@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 export const metadata: Metadata = { title: "Terms | Vioscribe" };
 
 export default function TermsPage() {
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "332547611+Turbulentmonk@users.noreply.github.com";
-
   return (
     <main className="legal-page">
       <p className="legal-kicker">~/TERMS</p>
@@ -41,7 +40,7 @@ export default function TermsPage() {
       <section>
         <h2>Contact</h2>
         <p>
-          Questions about these terms? Contact us{contactEmail ? <> at <a href={`mailto:${contactEmail}`}>{contactEmail}</a></> : " (the public contact email will be added before launch)."}
+          Questions about these terms? Contact us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
         </p>
       </section>
     </main>

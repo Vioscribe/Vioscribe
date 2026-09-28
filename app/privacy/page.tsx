@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 export const metadata: Metadata = { title: "Privacy | Vioscribe" };
 
 export default function PrivacyPage() {
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "332547611+Turbulentmonk@users.noreply.github.com";
-
   return (
     <main className="legal-page">
       <p className="legal-kicker">~/PRIVACY</p>
@@ -42,7 +41,7 @@ export default function PrivacyPage() {
         <h2>Your choices and questions</h2>
         <p>
           Do not put information in notes or cards that you would not want stored with your account. For privacy questions or a
-          request about your account data, contact us{contactEmail ? <> at <a href={`mailto:${contactEmail}`}>{contactEmail}</a></> : " (the public contact email will be added before launch)."}
+          request about your account data, contact us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
         </p>
       </section>
     </main>

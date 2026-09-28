@@ -5,7 +5,7 @@
 
 ## Who is responsible
 
-Vioscribe is operated by **[insert the operator’s legal name and the geographic address at which the service is established]** (the data controller). Contact: **332547611+Turbulentmonk@users.noreply.github.com**. Before publishing, verify that this address accepts and is monitored for privacy and support requests. Add any required controller representative or Data Protection Officer contact details if applicable.
+Vioscribe is operated by **[insert the operator’s legal name and the geographic address at which the service is established]** (the data controller). Contact: **vioscribe.support@gmail.com**. Add any required controller representative or Data Protection Officer contact details if applicable.
 
 ## Information processed
 
@@ -38,13 +38,13 @@ Vioscribe uses authentication cookies needed to maintain a secure signed-in sess
 
 ## Storage and retention
 
-Account and study records are kept while your account is active. You can request account deletion by contacting us. The database schema links account data for deletion when an account is removed; the operator must confirm that account removal is operationally available and verify provider backup and security-log retention periods. Provider backups or logs may retain information under their own retention schedules.
+Account and study records are kept while your account is active. You can request account deletion by contacting **vioscribe.support@gmail.com**. The database schema links account data for deletion when an account is removed; the operator must confirm that account removal is operationally available and verify provider backup and security-log retention periods. Provider backups or logs may retain information under their own retention schedules.
 
 The Supabase project region, any international transfers, and the applicable safeguards must be identified before publication. Ask the contact above for details about the safeguards that apply to your information.
 
 ## Your rights
 
-Depending on the circumstances, you may request access to your information, correction, erasure, restriction of processing, portability, or object to processing. Where processing is based on consent, you may withdraw consent. Contact us using the details above. You may also complain to the [UK Information Commissioner’s Office](https://ico.org.uk/make-a-complaint/).
+Depending on the circumstances, you may request access to your information, correction, erasure, restriction of processing, portability, or object to processing. Where processing is based on consent, you may withdraw consent. Contact **vioscribe.support@gmail.com**. You may also complain to the [UK Information Commissioner’s Office](https://ico.org.uk/make-a-complaint/).
 
 ## Children
 

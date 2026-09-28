@@ -20,7 +20,7 @@ Drafts for the public-facing pages are in this folder. Do not replace the live P
 1. **Controller and provider disclosure**
    - Identify the operator by the legal name required for the chosen operating form.
    - Resolve the public geographic address requirement without publishing a private home address. The owner chose to leave this as a launch blocker for now. A suitable service/business address may be an option, but confirm it is valid for the operator and service; do not use an invented address or assume a PO box is enough.
-   - Verify that `NEXT_PUBLIC_CONTACT_EMAIL` resolves to an actively monitored mailbox. The GitHub noreply address specified in the project brief is currently the code fallback, but it has not been verified as an inbox for privacy requests. Update the Netlify environment value too if it overrides the fallback.
+   - Confirm that `vioscribe.support@gmail.com` is monitored and that requests can be handled there. The contact address is configured centrally in `lib/contact.ts` and does not depend on a Netlify environment override.
    - Decide whether the operator must appoint or name a UK/EU representative or Data Protection Officer, based on the actual organisation and processing.
 
 2. **Confirm scope and lawful bases**

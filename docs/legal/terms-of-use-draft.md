@@ -5,7 +5,7 @@
 
 ## About Vioscribe
 
-Vioscribe is operated by **[insert the operator’s legal name and the geographic address at which the service is established]**. Contact: **332547611+Turbulentmonk@users.noreply.github.com**. Confirm that this is a working, monitored contact address and add any legally required service-provider information before publication.
+Vioscribe is operated by **[insert the operator’s legal name and the geographic address at which the service is established]**. Contact: **vioscribe.support@gmail.com**. Add any legally required service-provider information before publication.
 
 ## Using the service
 
@@ -25,4 +25,4 @@ Nothing in these terms excludes or limits rights that cannot legally be excluded
 
 ## Contact
 
-For questions or complaints, contact **332547611+Turbulentmonk@users.noreply.github.com**. Verify that this address is monitored before publishing these terms.
+For questions or complaints, contact **vioscribe.support@gmail.com**.
