@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+
 export default function NotFound() {
   return (
     <main className="not-found-page">
@@ -27,6 +28,8 @@ export default function NotFound() {
         <path d="M16 39l12-3M36 36l12 3" stroke="#54210d" strokeWidth="3" strokeLinecap="square" />
         <rect x="19" y="40" width="8" height="7" fill="#54210d" />
         <rect x="37" y="40" width="8" height="7" fill="#54210d" />
+        <path d="M46 46h4v4h3v6h-3v3h-4v-3h-2v-6h2z" fill="#8ee8ff" />
+        <path d="M47 48h2v4h-2z" fill="#e4fbff" />
         <path d="M26 51q6 8 12 0" fill="none" stroke="#54210d" strokeWidth="2.5" strokeLinecap="square" />
         <path d="M8 55h15v5h-4v5H8z" fill="#713417" />
         <path d="M22 57h20v6H22z" fill="#a64c16" />
@@ -34,12 +37,3 @@ export default function NotFound() {
         <path d="M7 64h50v5H7z" fill="#4c2414" />
         <path d="M11 57h6v3h-6zm34 0h6v3h-6z" fill="#d57925" />
         <path d="M27 59h4v2h-4zm7 1h5v2h-5z" fill="#e98b2e" />
-        <path d="M1 29h3v3H1zm55-8h3v3h-3zm-4-12h3v3h-3z" fill="#ffd45c" />
-      </svg>
-      <p className="legal-kicker">404 / PATH_NOT_FOUND</p>
-      <h1>This trail went cold.</h1>
-      <p>That page isn’t here. Let’s head back to the campfire.</p>
-      <Link href="/" className="landing-cta">Back to Vioscribe <span aria-hidden="true">-&gt;</span></Link>
-    </main>
-  );
-}
