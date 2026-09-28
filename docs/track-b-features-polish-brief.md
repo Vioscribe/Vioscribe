@@ -24,9 +24,9 @@ Build one item at a time, in the numbered order below — fully finish and repor
 
 4. **Legal, contact, and docs — in progress**
    - Draft privacy and terms copy plus the UK legal/privacy readiness checklist are in `docs/legal/`.
-   - The public pages are not updated yet: the operator’s public identity/address, a monitored contact inbox, processor locations/transfers, and child-safety assessments remain unresolved. Do not mark complete or publish draft text until those facts are verified.
+   - The Privacy and Terms contact addresses now use `vioscribe.support@gmail.com`; the rest of the public-page copy remains unchanged. The operator’s public identity/address, monitored-mailbox process, processor locations/transfers, and child-safety assessments remain unresolved. Do not mark complete or publish the drafts until those facts are verified.
    - ~~Replace the default starter README with Vioscribe setup and deploy instructions; link the existing Privacy and Terms pages from the footer.~~ **done.**
-   - Resolve the launch blockers in `docs/legal/compliance-readiness.md`, verify the public contact address is monitored, then replace the current public Privacy and Terms copy with the reviewed drafts.
+   - Resolve the launch blockers in `docs/legal/compliance-readiness.md`, confirm the support inbox is monitored, then replace the remaining public Privacy and Terms copy with the reviewed drafts.
 
 
 ## Stop here once items 1–4 are done — do not start these without asking
