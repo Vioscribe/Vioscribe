@@ -9,13 +9,14 @@ Track B owns new features and everything front-end/content — the "what does th
 Build one item at a time, in the numbered order below — fully finish and report back on one before starting the next, rather than working on several in parallel or jumping ahead. This is deliberate: it keeps focus on one thing at a time and makes it much easier to review what changed and catch problems early, rather than untangling several half-finished features at once.
 
 ## Status
-1. ~~Filing system~~ — **done.** `files` table + RLS, nullable `file_id` on `notes`/`decks`, the Filing Room UI, and the free/paid limits are all built. Start with item 2 below.
+1. ~~Filing system~~ — **done.** `files` table + RLS, nullable `file_id` on `notes`/`decks`, the Filing Room UI, and the free/paid limits are all built.
+2. ~~Badge scope decision~~ — **done.** Keep the existing badge system as built. The First 100 permanence fix is still outstanding under item 2 below; start with that fix.
 
 ## Your scope (work in this order)
 
-2. **Badge system scope decision + fix**
-   - This was built ahead of the original spec (streak-milestone badges, "First 100," developer badge, locked Pro/Classroom Pro placeholders). Confirm with me whether to keep all of it, trim any part, or just fix the known issue below — don't decide this alone.
-   - Known issue either way: the "First 100" badge is currently computed by sorting `profiles` by `created_at`/id rather than stored as a permanent flag, so deleting a test account could shift who counts. If the badge is being kept, store it as an immutable flag set at signup time instead.
+2. **Badge system fix**
+   - Scope decision: keep all existing badges (streak milestones, "First 100," developer, and locked Pro/Classroom Pro placeholders) as built.
+   - Known issue: the "First 100" badge is currently computed by sorting `profiles` by `created_at`/id rather than stored as a permanent flag, so deleting a test account could shift who counts. Store it as an immutable flag set at signup time.
 
 3. **Custom 404 page**
    - Branded to match the site (ember palette, monospace, campfire motif), a short friendly message, and a link home. Keep it simple — this is polish, not a core flow.
@@ -40,7 +41,7 @@ New `files`/Filing Room feature code and its own migration file, badge-related c
 - **Don't touch:** Supabase Auth/SMTP settings, existing RLS policies on decks/cards/notes/friends/rooms, Netlify deployment config, or database-level constraints on existing tables — that's Track A.
 - Add your database changes as a new, separate migration file — Track A may also be adding constraints to existing tables in parallel, so keep your changes additive and self-contained.
 - Pull `main` before starting each session, since Track A is committing in parallel.
-- If a decision is genuinely mine to make (the badge system scope decision above, or anything not already spelled out in `mvp-spec.md`), ask clearly and specifically rather than guessing.
+- If a decision is genuinely mine to make (anything not already spelled out in `mvp-spec.md`), ask clearly and specifically rather than guessing.
 - Commit and push incrementally, not in one giant batch.
 - Report back what you did at the end of each numbered step, plus anything still outstanding.
 - Work through items 1–4 strictly one at a time — don't start item 2 before item 1 is finished and reported on, and so on. Do not touch items 5–6 at all until told to.
