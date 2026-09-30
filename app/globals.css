@@ -572,15 +572,11 @@ a:hover {
   line-height: 1.1;
 }
 
-.landing-hero h1 .landing-slogan-highlight {
-  color: #ffd45c;
-}
-
 .landing-slogan-highlight {
   border-radius: 2px;
-  color: #ffd45c;
+  color: inherit;
   font-family: var(--font-plex-mono), monospace;
-  transition: text-shadow 180ms ease;
+  transition: text-shadow 220ms ease;
 }
 
 .landing-type-caret {
@@ -598,13 +594,8 @@ a:hover {
 }
 
 .landing-slogan-highlight:hover {
-  background: radial-gradient(
-    ellipse 58px 30px at var(--shimmer-x, 50%) var(--shimmer-y, 50%),
-    #fff6cf 0%, #ffe38c 34%, #ffd45c 78%
-  );
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 10px rgb(255 190 58 / 14%);
+  color: inherit;
+  text-shadow: 0 0 0.7em rgb(255 240 189 / 35%);
 }
 
 .landing-summary {
@@ -747,9 +738,8 @@ a:hover {
   .landing-brand.is-igniting .landing-embers i { animation: none; }
   .landing-cta { transition: none; }
   .landing-slogan-highlight:hover {
-    background: none;
-    color: #ffd45c;
-    animation: none;
+    color: inherit;
+    text-shadow: none;
   }
 }
 

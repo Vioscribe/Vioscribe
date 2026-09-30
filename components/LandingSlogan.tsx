@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SloganHighlight from "@/components/SloganHighlight";
 
 const LEAD_IN = "Pace your studies, protect your mind — ";
 const HIGHLIGHT = "Don't burn out.";
@@ -52,7 +51,7 @@ export default function LandingSlogan() {
   return (
     <h1 aria-label={FULL_SLOGAN}>
       <span aria-hidden="true">{leadIn}</span>
-      <SloganHighlight text={highlight} />
+      <span className="landing-slogan-highlight" aria-hidden="true">{highlight}</span>
       {isTyping && <span className="landing-type-caret" aria-hidden="true" />}
     </h1>
   );
