@@ -12,11 +12,17 @@ Track B owns new features and everything front-end/content — the "what does th
 Build one item at a time, in the numbered order below — fully finish and report back on one before starting the next, rather than working on several in parallel or jumping ahead. This is deliberate: it keeps focus on one thing at a time and makes it much easier to review what changed and catch problems early, rather than untangling several half-finished features at once.
 
 
-## Status
-1. ~~Filing system~~ — **done.** `files` table + RLS, nullable `file_id` on `notes`/`decks`, the Filing Room UI, and the free/paid limits are all built.
-2. ~~Badge scope decision~~ — **done.** Keep the existing badge system as built.
-3. ~~Badge system fix~~ — **done.** The First 100 badge is now stored permanently at signup, so deleting a profile cannot change who earned it.
-4. ~~Custom 404 page~~ — **done.** The branded 404 page includes the sad Sparky mascot and a link home.
+## Status (2 October 2026)
+
+**Completed:**
+- Filing system — `files` table + RLS, nullable `file_id` on `notes`/`decks`, Filing Room UI, and the free/paid limits.
+- Badge scope decision — keep the existing badge system as built.
+- Badge system fix — the First 100 badge is stored permanently at signup.
+- Custom 404 page — branded page with the sad Sparky mascot and a link home.
+- README and setup/deploy documentation — present in the repository.
+- Landing hero polish — one text tone, typewriter reveal, and subtle hover glow.
+
+**Current focus:** Legal, contact, and readiness documentation are drafted. They are not launch-cleared; see `docs/legal/compliance-readiness.md` and `docs/current-status-and-potential-issues.md`. The operator's public address remains an explicit blocker at their request.
 
 
 ## Your scope (work in this order)

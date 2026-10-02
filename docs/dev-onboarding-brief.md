@@ -6,7 +6,7 @@ Give this alongside the current `mvp-spec.md` — that file is the canonical sou
 Vioscribe is a study web app for students: notes → flashcards → spaced-repetition review → daily streaks → social study features (friends, shared decks, study rooms with leaderboards). No AI features on any plan, ever — that's a firm, non-negotiable product decision, not a placeholder.
 
 ## Repo and stack
-- GitHub repo: `Vioscribe/Vioscribe`, branch `main`. Use `git status` and the current branch head for the latest code; this brief was checked against `17bd3c8` on 29 September 2026.
+- GitHub repo: `Vioscribe/Vioscribe`, branch `main`. Use `git status` and the current branch head for the latest code; this brief was reviewed against `e013f66` on 2 October 2026.
 - Next.js 16 (App Router) + TypeScript + Tailwind CSS 4.
 - Supabase: Postgres, Auth (email + Google), Realtime (Presence for rooms), Row Level Security on every table.
 - TipTap for the notes editor.
@@ -17,7 +17,7 @@ Vioscribe is a study web app for students: notes → flashcards → spaced-repet
 ## Where things stand right now
 The core product loop is built: auth, decks/cards, review with spaced repetition, notes, streaks, friends + friends leaderboard, shareable deck links, study rooms with a personal (not synced) timer whose minutes feed both room and friends leaderboards, a current-month heatmap, and full ember/campfire branding with a pixel-art mascot. A global platform-wide leaderboard exists only as a locked "Coming soon" placeholder — real ranking logic is a future paid-tier feature, not built yet.
 
-This is **not launch-ready yet**. Check `mvp-spec.md` for current release gates. The live Netlify site is still on commit `12b74d2`: Netlify skipped the newer `main` commits because the team exhausted its production deploy credits for the current billing period (25 September–24 October 2026). The next period starts 25 October 2026. Do not assume a successful GitHub push means the production site was updated.
+This is **not launch-ready yet**. Check `mvp-spec.md` and [`current-status-and-potential-issues.md`](current-status-and-potential-issues.md) for release gates. The last recorded Netlify check (29 September) said production was still on `12b74d2` because deploy credits had been exhausted. That deployment and billing status was not rechecked on 2 October. Do not assume a successful GitHub push means the production site was updated.
 
 A badge system (streak milestones, a permanently recorded "First 100" badge, a developer badge, and locked Pro/Classroom Pro placeholders) is implemented and its scope was approved: keep it.
 

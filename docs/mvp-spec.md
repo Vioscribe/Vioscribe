@@ -25,8 +25,8 @@ This is not a fresh project — there's an existing codebase and GitHub repo alr
 - Deploy on Netlify
 - Row Level Security on every table so users can only access their own data or data shared with them
 
-## Current build status (code snapshot: 17bd3c8, checked 29 September 2026)
-This section records verified project status. The current `main` branch is at `17bd3c8`; the live Netlify site was last published from `12b74d2` because later production deploys were skipped after the team exhausted its available deploy credits. See the deployment note below.
+## Current build status (code snapshot: e013f66, repository reviewed 2 October 2026)
+This section records repository status at `e013f66`; live provider settings and the published site were not rechecked during the 2 October documentation review. See [`current-status-and-potential-issues.md`](current-status-and-potential-issues.md) for the distinction between code-confirmed facts and live checks still needed.
 
 **Implemented in code:**
 - Core study loop: auth (email/password + Google), profile creation with friend code, decks/cards CRUD, flashcard review with spaced repetition, TipTap notes editor with autosave, daily goal + streak tracking (now also tracking `longest_streak`).
@@ -34,13 +34,14 @@ This section records verified project status. The current `main` branch is at `1
 - Friends and sharing: add-by-code friend requests, friends list, weekly friends leaderboard (minutes/cards toggle), shareable deck links with logged-out preview and "save a copy."
 - Rooms and activity: create/join rooms by code (4-member cap), live presence (via Realtime Presence, not Postgres Changes), personal (not room-synced) Pomodoro timer whose minutes feed room + friends leaderboards, room leaderboard, current-month heatmap, streak display, global leaderboard as a locked "Coming soon" placeholder.
 - UI/branding: ember/campfire palette and monospace styling site-wide, one-time reduced-motion-aware campfire ignition on first landing visit, pixel-art mascot ("Sparky") with cursor-tracking eyes and click interactions.
+- Landing hero: the full headline now uses one text tone, retains its typewriter reveal, and adds a subtle hover glow (`e013f66`).
 - Filing system: `files` table with RLS, nullable `file_id` on `notes` and `decks`, a pixel-art Filing Room tab for browsing files and their contents, and the free/paid file-count and items-per-file limits enforced in one central place.
 - A Realtime bug in the personal timer (an invalid `user_id` filter) was found and fixed in `bb6d962` — code-only fix, no migration needed; Supabase logs showed clean (0 errors) after the fix.
 - **Badge scope decision made:** keep the existing badge system. The "First 100" award is stored permanently at signup; see the Track B status and the badge implementation notes below. Streak-milestone and developer badges, plus locked Pro/Classroom Pro placeholders, are also implemented.
 
-**Current production deployment:** Vioscribe is live at [vioscribe.netlify.app](https://vioscribe.netlify.app/). Netlify reports that production deploys are paused because the team used all available credits for the current billing period (25 September–24 October 2026). The billing page shows the next period beginning 25 October 2026. Commits `70e7735` and `17bd3c8` are on GitHub `main` but were skipped by Netlify, so the live site is still on `12b74d2`. Netlify says published sites remain live while production deploys are paused. Track A owns restoring deployment after credits reset or the project owner changes the plan.
+**Production deployment (last recorded check: 29 September 2026):** Vioscribe is hosted at [vioscribe.netlify.app](https://vioscribe.netlify.app/). The last repository note said Netlify had paused production deploys after the period's credits were used and that the published site was still on `12b74d2`. This was not rechecked on 2 October; treat the deployment and billing details as historical until confirmed in Netlify. Track A owns verifying the active deploy, environment variables, and auth redirects.
 
-**Remaining launch gates (checked 29 September 2026):**
+**Remaining launch gates (live checks last recorded 29 September 2026; recheck before launch):**
 1. Confirm signup email delivery and Google OAuth against the configured development and production callback URLs.
 2. Complete two-account end-to-end verification for friend requests, friends leaderboard, shared-deck preview/copy, room join/presence, and timer minutes flowing to the room and friends leaderboards.
 3. Confirm the full live Supabase migration state and re-audit production RLS. The daily-goal range migration was applied and confirmed by the project owner; that does not verify every migration or policy.

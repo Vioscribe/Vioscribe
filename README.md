@@ -32,6 +32,7 @@ This project uses Supabase for its database, auth, and Realtime features.
 ## Project docs
 
 See [`docs/mvp-spec.md`](docs/mvp-spec.md) for the full feature spec, data model, and current build status. `docs/track-a-infrastructure-brief.md` and `docs/track-b-features-polish-brief.md` cover the work currently in progress.
+For the latest repository review and open release checks, see [`docs/current-status-and-potential-issues.md`](docs/current-status-and-potential-issues.md).
 
 ## Deploy on Netlify
 
