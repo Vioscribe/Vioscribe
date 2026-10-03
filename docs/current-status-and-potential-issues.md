@@ -23,6 +23,7 @@ This is a repository review, not a live production, security, or legal audit. Co
 | Account rights | The readiness checklist records that the UI has no self-service account deletion or data export flow. | Confirm and document how deletion, access, correction, export, and erasure requests are actually fulfilled, including provider backups and shared links. |
 | Safety features | Report/block and age-appropriate access measures are deferred in the Track B/MVP documents. | Decide and scope them before treating Vioscribe as ready for student launch; do not silently mark the deferral as resolved. |
 | Automated checks | `package.json` defines lint and build commands, but no test script is configured. | Add focused automated coverage for high-risk flows when those features are next changed; complete the existing security checklist before launch. |
+| Deck creation feedback | The user reported that quickly clicking the add/create-deck button appears to do nothing. This behavior has not yet been reproduced. | Reproduce the report and track the fix in [`issues/001-add-deck-button-feedback.md`](issues/001-add-deck-button-feedback.md). |
 | Local setup | `.env.local` is intentionally ignored and was not present in the reviewed checkout. | A local authenticated preview needs the Supabase project URL and anon key configured locally. Never commit `.env.local` or a service-role key. |
 
 ## Recommended next steps
