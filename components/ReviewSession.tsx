@@ -128,17 +128,17 @@ export default function ReviewSession({
       <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
-          disabled={pending}
+          disabled={pending || !flipped}
           onClick={() => grade("not_yet")}
-          className="rounded-lg border border-stone-300 bg-white py-3 text-sm font-medium hover:bg-stone-100 disabled:opacity-50"
+          className="rounded-lg border border-stone-300 bg-white py-3 text-sm font-medium hover:bg-stone-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Not yet
         </button>
         <button
           type="button"
-          disabled={pending}
+          disabled={pending || !flipped}
           onClick={() => grade("got_it")}
-          className="rounded-lg bg-teal-800 py-3 text-sm font-medium text-white hover:bg-teal-900 disabled:opacity-50"
+          className="rounded-lg bg-teal-800 py-3 text-sm font-medium text-white hover:bg-teal-900 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Got it
         </button>
