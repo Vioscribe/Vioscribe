@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { saveNotes } from "@/app/actions";
@@ -13,6 +13,7 @@ export default function NotesEditor({
   initialContent: string;
 }) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [saveStatus, setSaveStatus] = useState("Saved");
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -26,8 +27,10 @@ export default function NotesEditor({
     onUpdate: ({ editor }) => {
       if (timer.current) clearTimeout(timer.current);
       const html = editor.getHTML();
-      timer.current = setTimeout(() => {
-        void saveNotes(noteId, html);
+      setSaveStatus("Unsaved changes");
+      timer.current = setTimeout(async () => {
+        const saved = await saveNotes(noteId, html);
+        setSaveStatus(saved ? "Saved" : "Could not save. Check your connection.");
       }, 800);
     },
   });
@@ -75,7 +78,7 @@ export default function NotesEditor({
       <div className="rounded-xl border border-stone-200 bg-white p-4">
         <EditorContent editor={editor} />
       </div>
-      <p className="text-xs text-stone-400">Autosaves a moment after you stop typing.</p>
+      <p aria-live="polite" className="text-xs text-stone-400">{saveStatus}</p>
     </div>
   );
 }

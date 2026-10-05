@@ -367,15 +367,17 @@ export async function saveNotes(noteId: string, content: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return false;
 
   const update = supabase
     .from("notes")
     .update({ content, updated_at: new Date().toISOString() });
   if (noteId === "legacy") {
-    await update.eq("user_id", user.id);
+    const { error } = await update.eq("user_id", user.id);
+    return !error;
   } else {
-    await update.eq("id", noteId).eq("user_id", user.id);
+    const { error } = await update.eq("id", noteId).eq("user_id", user.id);
+    return !error;
   }
 }
 
