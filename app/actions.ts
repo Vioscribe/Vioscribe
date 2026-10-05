@@ -284,7 +284,7 @@ export async function saveCard(formData: FormData) {
   const cardId = String(formData.get("card_id") || "");
   const front = String(formData.get("front") || "").trim();
   const back = String(formData.get("back") || "").trim();
-  if (!front || !back) return;
+  if (!front || !back) redirect("/decks/" + deckId + "?error=" + encodeURIComponent("Enter text for both sides of the card."));
 
   const supabase = await createClient();
 
