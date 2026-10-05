@@ -60,7 +60,8 @@ export default function ReviewSession({
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.altKey || event.ctrlKey || event.metaKey || event.target instanceof HTMLElement && event.target.isContentEditable) return;
+      const target = event.target;
+      if (event.altKey || event.ctrlKey || event.metaKey || target instanceof HTMLElement && (target.isContentEditable || target.closest("button, a, input, textarea, select, [role=button]"))) return;
       if (event.code === "Space") {
         event.preventDefault();
         setFlipped((value) => !value);
@@ -72,7 +73,7 @@ export default function ReviewSession({
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [current, flipped, pending]);
+  }, [current, flipped, pending, grade]);
 
   if (!current) {
     return (
