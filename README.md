@@ -29,9 +29,10 @@ Create `.env.local` with the Supabase project URL and anon key:
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 ```
 
-Keep `.env.local` private; it is ignored by Git.
+Keep `.env.local` private; it is ignored by Git. The service-role key powers account deletion, must stay server-side, and must never use a `NEXT_PUBLIC_` prefix. Add it to the hosting provider's server environment settings too.
 
 ## Database setup
 
@@ -52,7 +53,7 @@ The add/create-deck button has a user-reported issue when clicked rapidly; it ha
 
 1. Import the GitHub repository in the Netlify dashboard.
 2. Let Netlify detect the Next.js framework. The standard build command is `next build` and the publish directory is `.next`; no Vercel-specific configuration or extra adapter dependency is needed.
-3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SITE_URL=https://your-site.netlify.app` in the Netlify site settings. The public contact address is configured in `lib/contact.ts`.
+3. Add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL=https://your-site.netlify.app`, and the server-only `SUPABASE_SERVICE_ROLE_KEY` in the Netlify site settings. The service-role key powers account deletion and must not be exposed to the browser. The public contact address is configured in `lib/contact.ts`.
 4. In Supabase **Authentication → URL Configuration**, set **Site URL** to `https://your-site.netlify.app` and add both `https://your-site.netlify.app/auth/callback` and `http://localhost:3000/auth/callback` to **Redirect URLs**.
 5. In Google Cloud, keep the app domains under **Authorized JavaScript origins**, but set **Authorized redirect URIs** to the Supabase callback URL shown in the Supabase Google provider settings: `https://YOUR_PROJECT.supabase.co/auth/v1/callback`.
 

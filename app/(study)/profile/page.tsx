@@ -1,4 +1,5 @@
 import { saveClassroomBadgeColor } from "@/app/actions";
+import AccountDataControls from "@/components/AccountDataControls";
 import ProfileBadges from "@/components/ProfileBadges";
 import FlameIcon from "@/components/FlameIcon";
 import { requireUserId } from "@/lib/auth";
@@ -75,6 +76,14 @@ export default async function ProfilePage({
         </form>
         {params.saved && <p role="status" className="text-xs text-emerald-300">Color saved.</p>}
         {params.error && <p role="alert" className="text-xs text-red-300">{params.error}</p>}
+      </section>
+
+      <section className="space-y-4 border-t border-stone-700 pt-6" aria-labelledby="account-data-heading">
+        <div>
+          <p className="profile-kicker">ACCOUNT / YOUR DATA</p>
+          <h2 id="account-data-heading" className="text-xl font-semibold">Your data and account</h2>
+        </div>
+        <AccountDataControls />
       </section>
     </div>
   );
