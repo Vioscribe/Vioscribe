@@ -43,6 +43,8 @@ export default async function DeckPage({
         </Link>
       </div>
 
+      <p className="text-sm text-stone-500">{(cards || []).length} {(cards || []).length === 1 ? "card" : "cards"}</p>
+
       <section className="rounded-xl border border-stone-200 bg-white p-4">
         <h2 className="mb-3 text-sm font-medium text-stone-500">Add a card</h2>
         <form action={saveCard} className="grid gap-3 sm:grid-cols-2">
