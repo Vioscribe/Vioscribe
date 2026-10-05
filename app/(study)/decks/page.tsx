@@ -38,7 +38,7 @@ export default async function DecksPage() {
 
       <ul className="space-y-2">
         {(decks || []).length === 0 && (
-          <li className="text-sm text-stone-500">No decks yet.</li>
+          <li className="text-sm text-stone-500">No decks yet. Create one above, then add cards to start studying.</li>
         )}
         {(decks || []).map((deck) => (
           <li
