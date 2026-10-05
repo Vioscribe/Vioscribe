@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { reviewCard } from "@/app/actions";
 import type { Card } from "@/lib/types";
@@ -57,6 +57,22 @@ export default function ReviewSession({
       });
     });
   }
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.target instanceof HTMLElement && event.target.isContentEditable) return;
+      if (event.code === "Space") {
+        event.preventDefault();
+        setFlipped((value) => !value);
+      } else if (!pending && event.key.toLowerCase() === "y" && flipped) {
+        grade("got_it");
+      } else if (!pending && event.key.toLowerCase() === "n" && flipped) {
+        grade("not_yet");
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [current, flipped, pending]);
 
   if (!current) {
     return (
