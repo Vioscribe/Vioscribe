@@ -12,6 +12,7 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [message, setMessage] = useState<string | null>(initialMessage);
   const [busy, setBusy] = useState(false);
@@ -148,13 +149,14 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
         <label className="block text-sm">
           Password
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             required
             minLength={6}
             className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button type="button" className="mt-1 text-xs underline" onClick={() => setShowPassword((shown) => !shown)} aria-pressed={showPassword}>{showPassword ? "Hide password" : "Show password"}</button>
         </label>
         {mode === "login" && (
           <p className="text-right">
