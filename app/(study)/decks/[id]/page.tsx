@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { deleteCard, saveCard } from "@/app/actions";
 import { createClient } from "@/lib/supabase/server";
 import DeckSharing from "@/components/DeckSharing";
+import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
 
 export default async function DeckPage({
   params,
@@ -109,13 +110,13 @@ export default async function DeckPage({
                 </button>
               </div>
             </form>
-            <form action={deleteCard} className="mt-1">
+            <ConfirmDeleteForm action={deleteCard} className="mt-1" message="Delete this card? This cannot be undone.">
               <input type="hidden" name="deck_id" value={deck.id} />
               <input type="hidden" name="card_id" value={card.id} />
               <button type="submit" className="text-sm text-stone-400 hover:text-red-700">
                 Delete
               </button>
-            </form>
+            </ConfirmDeleteForm>
           </li>
         ))}
       </ul>

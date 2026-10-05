@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createNote, deleteNote } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
 import NotesEditor from "@/components/NotesEditor";
+import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
 import { requireUserId } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -100,10 +101,10 @@ export default async function NotesPage({
                     files={files ?? []}
                     returnTo="/notes"
                   />
-                  <form action={deleteNote}>
+                  <ConfirmDeleteForm action={deleteNote} message="Delete this note? This cannot be undone.">
                     <input type="hidden" name="note_id" value={note.id} />
                     <button type="submit" className="text-xs text-stone-500 hover:text-red-300">Delete</button>
-                  </form>
+                  </ConfirmDeleteForm>
                 </div>
               </li>
             ))}
