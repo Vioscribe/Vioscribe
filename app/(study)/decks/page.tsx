@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createDeck, deleteDeck } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
+import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DecksPage() {
@@ -53,12 +54,12 @@ export default async function DecksPage() {
                 <p className="text-xs text-stone-500">{deck.file_id ? `Filed in ${fileTitles.get(deck.file_id) ?? "a file"}` : "Unfiled"}</p>
                 {decks && files && <FileItemMoveForm item={deck} kind="deck" files={files} returnTo="/decks" />}
               </div>
-              <form action={deleteDeck}>
+              <ConfirmDeleteForm action={deleteDeck} message="Delete this deck and its cards? This cannot be undone.">
                 <input type="hidden" name="id" value={deck.id} />
                 <button type="submit" className="text-sm text-stone-400 hover:text-red-700">
                   Delete
                 </button>
-              </form>
+              </ConfirmDeleteForm>
             </div>
           </li>
         ))}
