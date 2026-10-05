@@ -104,7 +104,7 @@ export default function ReviewSession({
         <Link href={roomId ? `/rooms/${roomId}` : `/decks/${deckId}`} className="text-sm text-stone-500 hover:underline">
           ← {roomId ? "Room" : deckTitle}
         </Link>
-        <p className="text-sm text-stone-400">{queue.length} left</p>
+        <p aria-live="polite" className="text-sm text-stone-400">{queue.length} {queue.length === 1 ? "card" : "cards"} left, including retries</p>
       </div>
 
       <button
