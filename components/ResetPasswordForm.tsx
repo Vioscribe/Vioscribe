@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 export default function ResetPasswordForm({ hasSession }: { hasSession: boolean }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function ResetPasswordForm({ hasSession }: { hasSession: boolean 
           <label className="block text-sm">
             New password
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               minLength={6}
               autoComplete="new-password"
@@ -71,7 +72,7 @@ export default function ResetPasswordForm({ hasSession }: { hasSession: boolean 
           <label className="block text-sm">
             Confirm password
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               minLength={6}
               autoComplete="new-password"
@@ -80,6 +81,7 @@ export default function ResetPasswordForm({ hasSession }: { hasSession: boolean 
               onChange={(e) => setConfirm(e.target.value)}
             />
           </label>
+          <button type="button" className="text-xs underline" onClick={() => setShowPassword((shown) => !shown)} aria-pressed={showPassword}>{showPassword ? "Hide passwords" : "Show passwords"}</button>
           <button
             type="submit"
             disabled={busy}
