@@ -50,21 +50,24 @@ export default function NotesEditor({
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className="rounded border border-stone-300 px-2 py-1 hover:bg-white"
+          aria-pressed={editor.isActive("heading", { level: 1 })}
+          className={"rounded border border-stone-300 px-2 py-1 hover:bg-white " + (editor.isActive("heading", { level: 1 }) ? "bg-amber-100" : "")}
         >
           H1
         </button>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className="rounded border border-stone-300 px-2 py-1 hover:bg-white"
+          aria-pressed={editor.isActive("heading", { level: 2 })}
+          className={"rounded border border-stone-300 px-2 py-1 hover:bg-white " + (editor.isActive("heading", { level: 2 }) ? "bg-amber-100" : "")}
         >
           H2
         </button>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className="rounded border border-stone-300 px-2 py-1 hover:bg-white"
+          aria-pressed={editor.isActive("bulletList")}
+          className={"rounded border border-stone-300 px-2 py-1 hover:bg-white " + (editor.isActive("bulletList") ? "bg-amber-100" : "")}
         >
           Bullets
         </button>
