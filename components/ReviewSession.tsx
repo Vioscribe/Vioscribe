@@ -123,7 +123,7 @@ export default function ReviewSession({
           </span>
         </span>
       </button>
-      <p className="text-center text-xs text-stone-400">Tap the card to flip</p>
+      <p className="text-center text-xs text-stone-400">Tap or press Space to flip · Y: Got it · N: Not yet</p>
 
       <div className="grid grid-cols-2 gap-3">
         <button
