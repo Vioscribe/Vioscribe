@@ -297,6 +297,61 @@ export async function saveCard(formData: FormData) {
   redirect(`/decks/${deckId}`);
 }
 
+export async function createCardsFromNote(formData: FormData) {
+  const noteId = String(formData.get("note_id") || "");
+  const deckId = String(formData.get("deck_id") || "");
+  const encodedCards = String(formData.get("cards_json") || "");
+  const notePath = `/notes/${encodeURIComponent(noteId)}`;
+  if (!noteId || !deckId || encodedCards.length > 120_000) {
+    redirect(`${notePath}?error=${encodeURIComponent("The card list is invalid. Select a deck and try again.")}`);
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(encodedCards);
+  } catch {
+    redirect(`${notePath}?error=${encodeURIComponent("The card list is invalid. Select a deck and try again.")}`);
+  }
+  if (!Array.isArray(parsed) || parsed.length < 1 || parsed.length > 50) {
+    redirect(`${notePath}?error=${encodeURIComponent("Create between 1 and 50 cards at a time.")}`);
+  }
+  const cards: { front: string; back: string }[] = [];
+  for (const entry of parsed) {
+    if (
+      !entry
+      || typeof entry !== "object"
+      || !("front" in entry)
+      || !("back" in entry)
+      || typeof entry.front !== "string"
+      || typeof entry.back !== "string"
+    ) {
+      redirect(`${notePath}?error=${encodeURIComponent("The card list is invalid. Select a deck and try again.")}`);
+    }
+    const front = entry.front.trim();
+    const back = entry.back.trim();
+    if (!front || !back || front.length > 1000 || back.length > 1000) {
+      redirect(`${notePath}?error=${encodeURIComponent("Each card needs front and back text under 1,000 characters.")}`);
+    }
+    cards.push({ front, back });
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const [{ data: note }, { data: deck }] = await Promise.all([
+    supabase.from("notes").select("id").eq("id", noteId).eq("user_id", user.id).maybeSingle(),
+    supabase.from("decks").select("id").eq("id", deckId).eq("user_id", user.id).maybeSingle(),
+  ]);
+  if (!note || !deck) {
+    redirect(`${notePath}?error=${encodeURIComponent("Choose one of your notes and decks.")}`);
+  }
+
+  const { error } = await supabase.from("cards").insert(cards.map((card) => ({ ...card, deck_id: deck.id })));
+  if (error) redirect(`${notePath}?error=${encodeURIComponent("Could not create cards in that deck. Please try again.")}`);
+  redirect(`/decks/${deck.id}?created_cards=${cards.length}`);
+}
+
 export async function deleteCard(formData: FormData) {
   const deckId = String(formData.get("deck_id") || "");
   const cardId = String(formData.get("card_id") || "");

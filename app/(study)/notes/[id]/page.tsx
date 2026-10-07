@@ -17,7 +17,7 @@ export default async function NotePage({
   const supabase = await createClient();
   const userId = await requireUserId();
 
-  const [{ data: note, error }, { data: files }] = await Promise.all([
+  const [{ data: note, error }, { data: files }, { data: decks }] = await Promise.all([
     supabase
       .from("notes")
       .select("id, title, content, file_id, updated_at")
@@ -25,6 +25,7 @@ export default async function NotePage({
       .eq("user_id", userId)
       .maybeSingle(),
     supabase.from("files").select("id, title").order("title"),
+    supabase.from("decks").select("id, title").eq("user_id", userId).order("title"),
   ]);
 
   if (error) {
@@ -56,7 +57,7 @@ export default async function NotePage({
         </form>
         <FileItemMoveForm item={note} kind="note" files={files ?? []} returnTo={`/notes/${note.id}`} />
       </header>
-      <NotesEditor key={note.id} noteId={note.id} initialContent={note.content || ""} />
+      <NotesEditor key={note.id} noteId={note.id} initialContent={note.content || ""} decks={decks ?? []} />
       <p className="text-xs text-stone-600">Changes autosave to your account.</p>
     </div>
   );

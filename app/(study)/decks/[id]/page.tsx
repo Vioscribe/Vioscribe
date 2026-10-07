@@ -49,6 +49,9 @@ export default async function DeckPage({
       <p className="text-sm text-stone-500">{(cards || []).length} {(cards || []).length === 1 ? "card" : "cards"}</p>
 
       {typeof query.error === "string" && <p className="text-sm text-red-700" role="alert">{query.error}</p>}
+      {typeof query.created_cards === "string" && /^\d+$/.test(query.created_cards) && Number(query.created_cards) > 0 && (
+        <p className="text-sm text-emerald-700" role="status">Created {query.created_cards} {query.created_cards === "1" ? "card" : "cards"} from your note.</p>
+      )}
       <section className="rounded-xl border border-stone-200 bg-white p-4">
         <h2 className="mb-3 text-sm font-medium text-stone-500">Add a card</h2>
         <form action={saveCard} className="grid gap-3 sm:grid-cols-2">

@@ -21,6 +21,7 @@ Build one item at a time, in the numbered order below — fully finish and repor
 - Custom 404 page — branded page with the sad Sparky mascot and a link home.
 - README and setup/deploy documentation — present in the repository.
 - Landing hero polish — one text tone, typewriter reveal, and subtle hover glow.
+- Notes → card auto-creation — users can review and create up to 50 flashcards at a time from note lines written as `term :: definition` (code shipped 7 October 2026; runtime verification pending).
 
 **Current focus:** Legal, contact, and readiness documentation are drafted. They are not launch-cleared; see `docs/legal/compliance-readiness.md` and `docs/current-status-and-potential-issues.md`. The operator's public address remains an explicit blocker at their request.
 
@@ -35,9 +36,7 @@ Build one item at a time, in the numbered order below — fully finish and repor
    - Resolve the launch blockers in `docs/legal/compliance-readiness.md`, confirm the support inbox is monitored, then replace the remaining public Privacy and Terms copy with the reviewed drafts.
 
 
-## Stop here once items 1–4 are done — do not start these without asking
-Two items from the original `mvp-spec.md` were never confirmed as built and aren't part of this brief's core scope. **Do not build either of these until items 1–4 above are fully complete and I've explicitly told you to proceed.** Once you reach this point, stop and ask me directly whether to continue into them — don't assume yes and don't start planning them early.
+## Deferred scope
 
-
-5. **Notes → card auto-creation** (original Core feature #5): highlighting a note line to turn it into a flashcard, or `term :: definition` lines auto-creating cards. First check whether this already exists in the codebase before treating it as new work — it may have been built quietly alongside the notes editor and just never reported.
-6. **Safety section items:** report and block buttons on profiles and shared decks, plus age confirmation at signup. Given the app's under-18 user base, these matter — but they're still new scope, not something to start without a go-ahead.
+5. **Notes → card auto-creation** is now implemented as a reviewed conversion flow: the user chooses a deck, previews parsed `term :: definition` lines, and explicitly creates up to 50 cards per submission. It does not create cards automatically while typing.
+6. **Safety section items** remain deferred: report and block buttons on profiles and shared decks, plus age confirmation at signup. Given the app's under-18 user base, define their behavior and data handling before implementation; this brief does not treat them as launch-cleared.

@@ -69,7 +69,7 @@ The checklist above replaces earlier launch-status notes that incorrectly descri
 2. Decks and cards (manual create, edit, delete)
 3. Review mode with simple spaced repetition
 4. Streaks and daily goal (streak increases when the daily goal is met, resets after a missed day)
-5. Notes editor; users can highlight a line and turn it into a card, or use `term :: definition` lines to auto-create cards
+5. Notes editor; users can explicitly convert up to 50 lines formatted as `term :: definition` into flashcards in a chosen deck. Highlight-to-card conversion is not implemented.
 6. Shared deck links (public read-only link, copy to own account)
 7. Friends via friend code and a weekly friends-only leaderboard
 8. Study room with a synced timer, a live presence list, and a room-wide leaderboard for whoever is in the room (Supabase Realtime)
