@@ -44,6 +44,7 @@ export default async function DeckPage({
         >
           Review
         </Link>
+        <a href={`/api/decks/${deck.id}/csv`} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-50">Export CSV</a>
       </div>
 
       <p className="text-sm text-stone-500">{(cards || []).length} {(cards || []).length === 1 ? "card" : "cards"}</p>

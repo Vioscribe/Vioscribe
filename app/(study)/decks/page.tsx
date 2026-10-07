@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { createDeck, deleteDeck } from "@/app/actions";
+import { createDeck, deleteDeck, importDeckCsv } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
 import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function DecksPage() {
+export default async function DecksPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const query = await searchParams;
   const supabase = await createClient();
   const [{ data: decks }, { data: files }] = await Promise.all([
     supabase
@@ -22,6 +23,8 @@ export default async function DecksPage() {
         <p className="text-sm text-stone-500">Make a deck, then add cards inside it.</p>
       </div>
 
+      {query.error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{query.error}</p>}
+
       <form action={createDeck} className="flex gap-2">
         <input
           name="title"
@@ -36,6 +39,16 @@ export default async function DecksPage() {
           Create
         </button>
       </form>
+
+      <details className="rounded-xl border border-stone-200 bg-white p-4">
+        <summary className="cursor-pointer font-medium">Import a deck from CSV</summary>
+        <p className="mt-2 text-sm text-stone-500">Choose a CSV with front and back columns. Each row becomes one card, up to 500 cards.</p>
+        <form action={importDeckCsv} encType="multipart/form-data" className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+          <input name="title" required maxLength={80} placeholder="New deck title" className="rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          <input name="csv" type="file" required accept=".csv,text/csv" className="rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          <button type="submit" className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white">Import</button>
+        </form>
+      </details>
 
       <ul className="space-y-2">
         {(decks || []).length === 0 && (

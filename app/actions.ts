@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { applyDayRollover, applyReview } from "@/lib/streak";
 import { nextAfterGotIt, nextAfterMissed } from "@/lib/srs";
 import type { Profile } from "@/lib/types";
+import { parseCsv } from "@/lib/csv";
 
 function todayFromForm(formData: FormData) {
   // Browser sends local calendar date so streaks don't depend on UTC.
@@ -47,6 +48,45 @@ export async function createDeck(formData: FormData) {
     throw new Error(message);
   }
   redirect(`/decks/${data.id}`);
+}
+
+export async function importDeckCsv(formData: FormData) {
+  const title = String(formData.get("title") || "").trim();
+  const file = formData.get("csv");
+  if (!title || title.length > 80 || !(file instanceof File)) {
+    redirect(`/decks?error=${encodeURIComponent("Add a deck title and choose a CSV file.")}`);
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    redirect(`/decks?error=${encodeURIComponent("CSV files must be 2 MB or smaller.")}`);
+  }
+
+  let rows: string[][];
+  try {
+    rows = parseCsv(await file.text());
+  } catch (error) {
+    redirect(`/decks?error=${encodeURIComponent(error instanceof Error ? error.message : "Could not read CSV.")}`);
+  }
+  if (rows[0]?.[0]?.trim().toLowerCase() === "front" && rows[0]?.[1]?.trim().toLowerCase() === "back") rows.shift();
+  const cards = rows.map(([front, back]) => ({ front: front?.trim() ?? "", back: back?.trim() ?? "" }));
+  if (!cards.length || cards.length > 500 || cards.some((card) => !card.front || !card.back || card.front.length > 10000 || card.back.length > 10000)) {
+    redirect(`/decks?error=${encodeURIComponent("CSV must contain 1–500 rows, with front and back text in every row (up to 10,000 characters each).")}`);
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const { data: deck, error: deckError } = await supabase
+    .from("decks")
+    .insert({ user_id: user.id, title })
+    .select("id")
+    .single();
+  if (deckError || !deck) redirect(`/decks?error=${encodeURIComponent(deckError?.message || "Could not create deck.")}`);
+  const { error } = await supabase.from("cards").insert(cards.map((card) => ({ ...card, deck_id: deck.id })));
+  if (error) {
+    await supabase.from("decks").delete().eq("id", deck.id).eq("user_id", user.id);
+    redirect(`/decks?error=${encodeURIComponent("The deck could not be imported. No partial deck was kept.")}`);
+  }
+  redirect(`/decks/${deck.id}`);
 }
 
 export async function createFile(formData: FormData) {
