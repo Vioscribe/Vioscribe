@@ -7,9 +7,10 @@ import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
 
 export default async function DeckPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
@@ -47,7 +48,7 @@ export default async function DeckPage({
 
       <p className="text-sm text-stone-500">{(cards || []).length} {(cards || []).length === 1 ? "card" : "cards"}</p>
 
-      {query?.error && <p className="text-sm text-red-700" role="alert">{query.error}</p>}
+      {typeof query.error === "string" && <p className="text-sm text-red-700" role="alert">{query.error}</p>}
       <section className="rounded-xl border border-stone-200 bg-white p-4">
         <h2 className="mb-3 text-sm font-medium text-stone-500">Add a card</h2>
         <form action={saveCard} className="grid gap-3 sm:grid-cols-2">
