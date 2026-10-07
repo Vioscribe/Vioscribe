@@ -284,6 +284,39 @@ export async function respondToFriendRequest(formData: FormData) {
   redirect("/friends?updated=1");
 }
 
+export async function blockFriend(formData: FormData) {
+  const blockedId = String(formData.get("friend_id") || "");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(blockedId) || blockedId === user.id) {
+    redirect("/friends?error=Could%20not%20block%20that%20account");
+  }
+
+  const { error } = await supabase.from("user_blocks").insert({ blocker_id: user.id, blocked_id: blockedId });
+  if (error) redirect(`/friends?error=${encodeURIComponent("Could not block this account. Apply the latest database migration and try again.")}`);
+  await supabase.from("friend_requests").delete().or(`and(sender_id.eq.${user.id},recipient_id.eq.${blockedId}),and(sender_id.eq.${blockedId},recipient_id.eq.${user.id})`);
+  revalidatePath("/friends");
+  revalidatePath("/rooms");
+  redirect("/friends?blocked=1");
+}
+
+export async function reportSharedDeck(formData: FormData) {
+  const slug = String(formData.get("share_slug") || "");
+  const reason = String(formData.get("reason") || "");
+  if (!slug || !["inappropriate", "bullying", "personal_information", "other"].includes(reason)) {
+    redirect(`/share/${encodeURIComponent(slug)}?error=Choose%20a%20reason%20for%20the%20report`);
+  }
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const { data: deck } = await supabase.from("decks").select("id").eq("share_slug", slug).eq("is_shareable", true).maybeSingle();
+  if (!deck) redirect("/share/unavailable");
+  const { error } = await supabase.from("safety_reports").insert({ reporter_id: user.id, deck_id: deck.id, reason });
+  if (error) redirect(`/share/${slug}?error=${encodeURIComponent("Could not send the report. Please try again later.")}`);
+  redirect(`/share/${slug}?reported=1`);
+}
+
 export async function createStudyRoom() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

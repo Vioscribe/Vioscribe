@@ -1,4 +1,4 @@
-import { addFriendByCode, respondToFriendRequest } from "@/app/actions";
+import { addFriendByCode, blockFriend, respondToFriendRequest } from "@/app/actions";
 import Leaderboard from "@/components/Leaderboard";
 import LeaderboardTabs from "@/components/LeaderboardTabs";
 import { requireUserId } from "@/lib/auth";
@@ -16,7 +16,7 @@ type RequestRow = {
 export default async function FriendsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; sent?: string; updated?: string }>;
+  searchParams: Promise<{ error?: string; sent?: string; updated?: string; blocked?: string }>;
 }) {
   const params = await searchParams;
   const supabase = await createClient();
@@ -71,6 +71,7 @@ export default async function FriendsPage({
         {params.error && <p role="alert" className="text-sm text-orange-300">{params.error}</p>}
         {params.sent && <p role="status" className="text-sm text-stone-500">Friend request sent.</p>}
         {params.updated && <p role="status" className="text-sm text-stone-500">Friend request updated.</p>}
+        {params.blocked && <p role="status" className="text-sm text-stone-500">Account blocked and removed from your friends list.</p>}
       </section>
 
       <section className="space-y-3">
@@ -114,8 +115,12 @@ export default async function FriendsPage({
         ) : (
           <ul className="space-y-2">
             {friends.map((friend) => (
-              <li key={friend.friend_id} className="rounded-lg border border-stone-200 bg-white px-4 py-3 text-sm">
-                {friend.display_name}
+              <li key={friend.friend_id} className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3 text-sm">
+                <span>{friend.display_name}</span>
+                <form action={blockFriend}>
+                  <input type="hidden" name="friend_id" value={friend.friend_id} />
+                  <button type="submit" className="text-xs text-red-700 underline">Block</button>
+                </form>
               </li>
             ))}
           </ul>

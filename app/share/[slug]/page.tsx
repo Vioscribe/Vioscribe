@@ -5,10 +5,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function SharedDeckPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ reported?: string; error?: string }>;
 }) {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
   const [{ data: deck }, { data: auth }] = await Promise.all([
     supabase
@@ -40,6 +42,8 @@ export default async function SharedDeckPage({
       </header>
 
       <CopySharedDeckForm slug={slug} signedIn={Boolean(auth.user)} />
+      {query.reported && <p role="status" className="text-sm text-emerald-700">Thanks. Your report has been recorded for review.</p>}
+      {query.error && <p role="alert" className="text-sm text-red-700">{query.error}</p>}
 
       <ol className="space-y-3">
         {(cards ?? []).map((card, index) => (
