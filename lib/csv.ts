@@ -1,4 +1,5 @@
 export function parseCsv(text: string): string[][] {
+  text = text.replace(/^\uFEFF/, "");
   const rows: string[][] = [];
   let row: string[] = [];
   let cell = "";
