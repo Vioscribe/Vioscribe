@@ -26,16 +26,18 @@ function formatTime(total: number) {
 
 export default function PersonalTimer({
   initialTimer,
+  initialNow,
   userId,
   roomId,
 }: {
   initialTimer: TimerRow | null;
+  initialNow: number;
   userId: string;
   roomId?: string;
 }) {
   const [timer, setTimer] = useState<TimerRow | null>(initialTimer);
-  // Keep the server render stable; initialize the browser clock after hydration.
-  const [now, setNow] = useState<number | null>(null);
+  // Seed from the server render so a running timer never flashes its full phase length.
+  const [now, setNow] = useState(initialNow);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const advancing = useRef(false);
@@ -88,8 +90,7 @@ export default function PersonalTimer({
   const defaultPhaseLength = timer?.timer_phase === "break" ? 300 : 1500;
   const remaining = timer?.timer_state === "paused"
     ? timer.seconds_left
-    : now === null ? defaultPhaseLength
-      : timer?.ends_at ? Math.max(0, (Date.parse(timer.ends_at) - now) / 1000) : defaultPhaseLength;
+    : timer?.ends_at ? Math.max(0, (Date.parse(timer.ends_at) - now) / 1000) : defaultPhaseLength;
 
   useEffect(() => {
     if (timer?.timer_state !== "paused" && remaining <= 0) {

@@ -68,7 +68,7 @@ export default async function HeatmapPage() {
         <p className="text-sm">Current streak: <strong className="font-mono text-amber-700">{profileResult.data?.current_streak ?? 0} days</strong></p>
       </header>
 
-      <PersonalTimer initialTimer={timerResult.data} userId={userId} />
+      <PersonalTimer initialTimer={timerResult.data} initialNow={Date.now()} userId={userId} />
 
       <section className="space-y-4 rounded-xl border border-stone-200 bg-white p-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2">

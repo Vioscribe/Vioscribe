@@ -54,7 +54,7 @@ export default async function StudyRoomPage({
       {query.error && <p role="alert" className="text-sm text-red-700">{query.error}</p>}
 
       <RoomPresence roomId={room.id} userId={userId} displayName={profileResult.data?.display_name ?? "Student"} />
-      <PersonalTimer initialTimer={timerResult.data} userId={userId} roomId={room.id} />
+      <PersonalTimer initialTimer={timerResult.data} initialNow={Date.now()} userId={userId} roomId={room.id} />
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium">Study from a deck</h2>
