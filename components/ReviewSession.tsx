@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { reviewCard } from "@/app/actions";
 import type { Card } from "@/lib/types";
@@ -12,16 +12,21 @@ function localToday() {
 }
 
 type QueuedCard = { card: Card; retry: boolean };
+type PendingReview = { reviewId: string; cardId: string; result: "got_it" | "not_yet"; today: string; roomId: string | null };
+
+function queueKey(userId: string) { return `vioscribe:offline-reviews:${userId}`; }
 
 export default function ReviewSession({
   deckId,
   deckTitle,
+  userId,
   roomId = null,
   initialCards,
   allCards,
 }: {
   deckId: string;
   deckTitle: string;
+  userId: string;
   roomId?: string | null;
   initialCards: Card[];
   allCards: Card[];
@@ -32,20 +37,82 @@ export default function ReviewSession({
   );
   const [flipped, setFlipped] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [queuedCount, setQueuedCount] = useState(0);
+  const [syncing, setSyncing] = useState(false);
+  const syncingRef = useRef(false);
   const current = queue[0]?.card;
   const today = useMemo(() => localToday(), []);
+
+  const syncQueued = useCallback(async () => {
+    if (!navigator.onLine || syncingRef.current) return;
+    syncingRef.current = true;
+    setSyncing(true);
+    try {
+      const key = queueKey(userId);
+      const queued = JSON.parse(localStorage.getItem(key) || "[]") as PendingReview[];
+      let saved = 0;
+      for (const item of queued) {
+        const form = new FormData();
+        form.set("review_id", item.reviewId);
+        form.set("card_id", item.cardId);
+        form.set("result", item.result);
+        form.set("today", item.today);
+        if (item.roomId) form.set("room_id", item.roomId);
+        try {
+          await reviewCard(form);
+          saved += 1;
+        } catch {
+          break;
+        }
+      }
+      const remaining = queued.slice(saved);
+      localStorage.setItem(key, JSON.stringify(remaining));
+      setQueuedCount(remaining.length);
+    } catch {
+      // Keep queued reviews in browser storage if reconnecting or storage fails.
+    } finally {
+      syncingRef.current = false;
+      setSyncing(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const key = queueKey(userId);
+    try { setQueuedCount((JSON.parse(localStorage.getItem(key) || "[]") as PendingReview[]).length); } catch { setQueuedCount(0); }
+    void syncQueued();
+    const onOnline = () => { void syncQueued(); };
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [syncQueued, userId]);
 
   function grade(result: "got_it" | "not_yet") {
     if (!current) return;
     const card = current;
     const isRetry = queue[0].retry;
     startTransition(async () => {
-      const form = new FormData();
-      form.set("card_id", card.id);
-      form.set("result", result);
-      form.set("today", today);
-      if (roomId) form.set("room_id", roomId);
-      await reviewCard(form);
+      const review: PendingReview = { reviewId: crypto.randomUUID(), cardId: card.id, result, today, roomId };
+      let queuedOffline = !navigator.onLine;
+      if (!queuedOffline) {
+        const form = new FormData();
+        form.set("review_id", review.reviewId);
+        form.set("card_id", card.id);
+        form.set("result", result);
+        form.set("today", today);
+        if (roomId) form.set("room_id", roomId);
+        try { await reviewCard(form); } catch { queuedOffline = true; }
+      }
+      if (queuedOffline) {
+        try {
+          const key = queueKey(userId);
+          const queued = JSON.parse(localStorage.getItem(key) || "[]") as PendingReview[];
+          queued.push(review);
+          localStorage.setItem(key, JSON.stringify(queued));
+          setQueuedCount(queued.length);
+        } catch {
+          // The card stays in the current session, but the UI will warn that it could not be saved.
+          setQueuedCount(-1);
+        }
+      }
 
       setFlipped(false);
       setQueue((q) => {
@@ -125,6 +192,8 @@ export default function ReviewSession({
         </span>
       </button>
       <p className="text-center text-xs text-stone-400">Tap or press Space to flip · Y: Got it · N: Not yet</p>
+      {queuedCount > 0 && <p role="status" className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">{queuedCount} review{queuedCount === 1 ? "" : "s"} saved on this device and waiting to sync{syncing ? "…" : ""}</p>}
+      {queuedCount === -1 && <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">This review could not be saved locally. Keep this page open and try again when connected.</p>}
 
       <div className="grid grid-cols-2 gap-3">
         <button

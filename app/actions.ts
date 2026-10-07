@@ -435,6 +435,7 @@ export async function deleteCard(formData: FormData) {
 
 export async function reviewCard(formData: FormData) {
   const cardId = String(formData.get("card_id") || "");
+  const reviewId = String(formData.get("review_id") || "");
   const known = String(formData.get("result") || "") === "got_it";
   const roomId = String(formData.get("room_id") || "") || null;
   const today = todayFromForm(formData);
@@ -444,6 +445,12 @@ export async function reviewCard(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(reviewId)) {
+    throw new Error("This review could not be saved. Please try again.");
+  }
+
+  const { data: existingReview } = await supabase.from("study_reviews").select("id, user_id").eq("id", reviewId).maybeSingle();
+  if (existingReview?.user_id === user.id) return;
 
   const { data: card } = await supabase
     .from("cards")
@@ -452,6 +459,15 @@ export async function reviewCard(formData: FormData) {
     .single();
 
   if (!card) return;
+
+  const { error: reviewLogError } = await supabase
+    .from("study_reviews")
+    .insert({ id: reviewId, user_id: user.id, card_id: card.id, room_id: roomId });
+  if (reviewLogError) {
+    const { data: duplicate } = await supabase.from("study_reviews").select("id, user_id").eq("id", reviewId).maybeSingle();
+    if (duplicate?.user_id === user.id) return;
+    throw new Error(reviewLogError.message);
+  }
 
   const interval = known
     ? nextAfterGotIt(card.interval_minutes)
@@ -462,11 +478,6 @@ export async function reviewCard(formData: FormData) {
     .from("cards")
     .update({ interval_minutes: interval, next_review_at: nextReview })
     .eq("id", cardId);
-
-  const { error: reviewLogError } = await supabase
-    .from("study_reviews")
-    .insert({ user_id: user.id, card_id: card.id, room_id: roomId });
-  if (reviewLogError) throw new Error(reviewLogError.message);
 
   const { data: profile } = await supabase
     .from("profiles")

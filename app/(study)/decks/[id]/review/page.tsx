@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import ReviewSession from "@/components/ReviewSession";
 import { createClient } from "@/lib/supabase/server";
+import { requireUserId } from "@/lib/auth";
 import type { Card } from "@/lib/types";
 
 export default async function ReviewPage({
@@ -13,6 +14,7 @@ export default async function ReviewPage({
   const { id } = await params;
   const { room: roomId } = await searchParams;
   const supabase = await createClient();
+  const userId = await requireUserId();
 
   const { data: deck } = await supabase
     .from("decks")
@@ -48,6 +50,7 @@ export default async function ReviewPage({
   return (
     <ReviewSession
       deckId={deck.id}
+      userId={userId}
       deckTitle={deck.title}
       roomId={roomId || null}
       initialCards={dueCards}
