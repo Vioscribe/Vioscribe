@@ -293,9 +293,8 @@ export async function blockFriend(formData: FormData) {
     redirect("/friends?error=Could%20not%20block%20that%20account");
   }
 
-  const { error } = await supabase.from("user_blocks").insert({ blocker_id: user.id, blocked_id: blockedId });
+  const { error } = await supabase.rpc("block_user", { target_user_id: blockedId });
   if (error) redirect(`/friends?error=${encodeURIComponent("Could not block this account. Apply the latest database migration and try again.")}`);
-  await supabase.from("friend_requests").delete().or(`and(sender_id.eq.${user.id},recipient_id.eq.${blockedId}),and(sender_id.eq.${blockedId},recipient_id.eq.${user.id})`);
   revalidatePath("/friends");
   revalidatePath("/rooms");
   redirect("/friends?blocked=1");
