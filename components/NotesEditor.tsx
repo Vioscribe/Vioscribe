@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { createCardsFromNote, saveNotes } from "@/app/actions";
@@ -18,12 +18,32 @@ export default function NotesEditor({
   decks: DeckOption[];
 }) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveQueue = useRef<Promise<void>>(Promise.resolve());
+  const saveVersion = useRef(0);
+  const mounted = useRef(false);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [deckId, setDeckId] = useState(decks[0]?.id ?? "");
   const [cardDrafts, setCardDrafts] = useState<CardDraft[]>([]);
   const [omittedCards, setOmittedCards] = useState(0);
   const [overlongLines, setOverlongLines] = useState(0);
   const [searchedForCards, setSearchedForCards] = useState(false);
+
+  const enqueueSave = useCallback((html: string) => {
+    const version = ++saveVersion.current;
+    saveQueue.current = saveQueue.current.catch(() => {}).then(async () => {
+      try {
+        const saved = await saveNotes(noteId, html);
+        if (mounted.current && version === saveVersion.current) {
+          setSaveStatus(saved ? "Saved" : "Could not save. Check your connection.");
+        }
+      } catch {
+        if (mounted.current && version === saveVersion.current) {
+          setSaveStatus("Could not save. Check your connection.");
+        }
+      }
+    });
+    return saveQueue.current;
+  }, [noteId]);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -35,6 +55,7 @@ export default function NotesEditor({
       },
     },
     onUpdate: ({ editor }) => {
+      saveVersion.current += 1;
       if (timer.current) clearTimeout(timer.current);
       const html = editor.getHTML();
       setSaveStatus("Unsaved changes");
@@ -43,21 +64,23 @@ export default function NotesEditor({
       setOverlongLines(0);
       setSearchedForCards(false);
       timer.current = setTimeout(async () => {
-        const saved = await saveNotes(noteId, html);
-        setSaveStatus(saved ? "Saved" : "Could not save. Check your connection.");
+        setSaveStatus("Saving…");
+        await enqueueSave(html);
       }, 800);
     },
   });
 
   useEffect(() => {
+    mounted.current = true;
     return () => {
+      mounted.current = false;
       if (timer.current) {
         clearTimeout(timer.current);
         timer.current = null;
-        if (editor) void saveNotes(noteId, editor.getHTML());
+        if (editor) void enqueueSave(editor.getHTML());
       }
     };
-  }, [editor, noteId]);
+  }, [editor, enqueueSave]);
 
   function prepareCards() {
     if (!editor) return;
