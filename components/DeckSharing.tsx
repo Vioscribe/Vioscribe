@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { setDeckShareable } from "@/app/actions";
+import CopyShareLinkButton from "@/components/CopyShareLinkButton";
 
 export default function DeckSharing({
   deckId,
@@ -22,12 +23,15 @@ export default function DeckSharing({
       </div>
 
       {shareable && shareSlug && (
-        <p className="break-all text-sm">
-          Public link: {" "}
-          <Link href={`/share/${shareSlug}`} target="_blank" className="text-amber-300 underline">
-            /share/{shareSlug}
-          </Link>
-        </p>
+        <div className="space-y-2">
+          <p className="break-all text-sm">
+            Public link: {" "}
+            <Link href={`/share/${shareSlug}`} target="_blank" className="text-amber-300 underline">
+              /share/{shareSlug}
+            </Link>
+          </p>
+          <CopyShareLinkButton path={`/share/${shareSlug}`} />
+        </div>
       )}
 
       <form action={setDeckShareable}>
