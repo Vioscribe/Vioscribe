@@ -31,6 +31,7 @@ export default async function DecksPage({ searchParams }: { searchParams: Promis
       <details className="rounded-xl border border-stone-200 bg-white p-4">
         <summary className="cursor-pointer font-medium">Import a deck from CSV</summary>
         <p className="mt-2 text-sm text-stone-500">Choose a CSV with front and back columns. Each row becomes one card, up to 500 cards.</p>
+        <a href="/deck-cards-template.csv" download className="mt-2 inline-block text-sm font-medium text-teal-800 underline">Download a CSV example</a>
         <form action={importDeckCsv} encType="multipart/form-data" className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
           <input name="title" required maxLength={80} placeholder="New deck title" className="rounded-lg border border-stone-300 px-3 py-2 text-sm" />
           <input name="csv" type="file" required accept=".csv,text/csv" className="rounded-lg border border-stone-300 px-3 py-2 text-sm" />
