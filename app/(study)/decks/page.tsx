@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { createDeck, deleteDeck, importDeckCsv } from "@/app/actions";
+import { deleteDeck, importDeckCsv } from "@/app/actions";
 import FileItemMoveForm from "@/components/FileItemMoveForm";
 import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
+import CreateDeckForm from "@/components/CreateDeckForm";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DecksPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
@@ -25,20 +26,7 @@ export default async function DecksPage({ searchParams }: { searchParams: Promis
 
       {query.error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{query.error}</p>}
 
-      <form action={createDeck} className="flex gap-2">
-        <input
-          name="title"
-          required
-          placeholder="New deck title"
-          className="flex-1 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-        />
-        <button
-          type="submit"
-          className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900"
-        >
-          Create
-        </button>
-      </form>
+      <CreateDeckForm />
 
       <details className="rounded-xl border border-stone-200 bg-white p-4">
         <summary className="cursor-pointer font-medium">Import a deck from CSV</summary>
