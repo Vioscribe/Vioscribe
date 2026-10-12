@@ -36,6 +36,7 @@ export default function PersonalTimer({
   roomId?: string;
 }) {
   const [timer, setTimer] = useState<TimerRow | null>(initialTimer);
+  const [timerReady, setTimerReady] = useState(initialTimer !== null);
   // Seed from the server render so a running timer never flashes its full phase length.
   const [now, setNow] = useState(initialNow);
   const [notice, setNotice] = useState("");
@@ -59,6 +60,7 @@ export default function PersonalTimer({
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not update the timer.");
     } finally {
+      setTimerReady(true);
       advancing.current = false;
     }
   }, [timer?.timer_phase]);
@@ -75,7 +77,10 @@ export default function PersonalTimer({
         // Leaving the filter off avoids Realtime's invalid-column filter error;
         // the table's own-row RLS policy still limits delivered updates.
         event: "*", schema: "public", table: "personal_timers",
-      }, (payload) => setTimer(payload.new as TimerRow))
+      }, (payload) => {
+        setTimer(payload.new as TimerRow);
+        setTimerReady(true);
+      })
       .subscribe();
 
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
@@ -93,7 +98,7 @@ export default function PersonalTimer({
     : timer?.ends_at ? Math.max(0, (Date.parse(timer.ends_at) - now) / 1000) : defaultPhaseLength;
 
   useEffect(() => {
-    if (timer?.timer_state !== "paused" && remaining <= 0) {
+    if (timer && timer?.timer_state !== "paused" && remaining <= 0) {
       const timeout = window.setTimeout(() => void advanceRef.current(), 0);
       return () => window.clearTimeout(timeout);
     }
@@ -134,9 +139,11 @@ export default function PersonalTimer({
         <p className="text-xs uppercase tracking-wider text-amber-600">Personal Pomodoro</p>
         <h2 className="mt-1 text-lg font-medium">{phase === "study" ? "Study block · 25 min" : "Break · 5 min"}</h2>
       </div>
-      <p className="font-mono text-5xl tabular-nums" aria-live="off">{formatTime(remaining)}</p>
+      <p className="font-mono text-5xl tabular-nums" aria-live="off">{timer ? formatTime(remaining) : "––:––"}</p>
       <div className="flex justify-center gap-2">
-        {running ? (
+        {!timerReady ? (
+          <button type="button" disabled className="cursor-wait rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-500">Loading timer…</button>
+        ) : running ? (
           <button type="button" onClick={() => void control("pause")} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-100">Pause and log time</button>
         ) : (
           <button type="button" onClick={() => void control("start")} className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900">Start {phase === "study" ? "study" : "break"}</button>
