@@ -32,7 +32,10 @@ export default async function StudyPlannerPage() {
     return {
       date,
       key,
-      cards: cards.filter((card) => dayKey(new Date(card.next_review_at)) === key),
+      cards: cards.filter((card) => {
+        const dueDay = dayKey(new Date(card.next_review_at));
+        return offset === 0 ? dueDay <= todayKey : dueDay === key;
+      }),
     };
   });
   const dueToday = cards.filter((card) => new Date(card.next_review_at) <= today).length;
