@@ -26,33 +26,31 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
     }
     setBusy(true);
     setMessage(null);
-    const supabase = createClient();
+    try {
+      const supabase = createClient();
 
-    if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${getSiteUrl()}/auth/callback`,
-        },
-      });
-      setBusy(false);
-      if (error) {
-        setMessage(error.message);
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${getSiteUrl()}/auth/callback`,
+          },
+        });
+        if (error) throw error;
+        setMessage("Check your email to confirm, then come back and log in.");
         return;
       }
-      setMessage("Check your email to confirm, then come back and log in.");
-      return;
-    }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) {
-      setMessage(error.message);
-      return;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      router.push("/decks");
+      router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Sign-in failed. Please try again.");
+    } finally {
+      setBusy(false);
     }
-    router.push("/decks");
-    router.refresh();
   }
 
   async function onGoogle() {
