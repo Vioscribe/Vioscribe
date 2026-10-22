@@ -80,7 +80,7 @@ export default function PersonalTimer({
         // the table's own-row RLS policy still limits delivered updates.
         event: "*", schema: "public", table: "personal_timers",
       }, (payload) => {
-        setTimer(payload.new as TimerRow);
+        setTimer(payload.eventType === "DELETE" ? null : timerRow(payload.new));
         setTimerReady(true);
       })
       .subscribe();
