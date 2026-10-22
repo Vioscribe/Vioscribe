@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const links = [
@@ -16,6 +17,7 @@ const links = [
 ];
 
 export default function ResponsiveNavLinks() {
+  const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const moreMeasureRef = useRef<HTMLButtonElement>(null);
@@ -89,7 +91,13 @@ export default function ResponsiveNavLinks() {
     <>
       <nav ref={navRef} className="site-nav-links" aria-label="Main navigation">
         {links.slice(0, shownCount).map((link) => (
-          <Link key={link.href} href={link.href}>{link.label}</Link>
+          <Link
+            key={link.href}
+            href={link.href}
+            aria-current={pathname === link.href || pathname.startsWith(`${link.href}/`) ? "page" : undefined}
+          >
+            {link.label}
+          </Link>
         ))}
         {hasMore && (
           <div className="site-nav-more">
@@ -105,7 +113,15 @@ export default function ResponsiveNavLinks() {
             {isOpen && (
               <div id="site-nav-more-menu" className="site-nav-more-menu" role="menu">
                 {links.slice(shownCount).map((link) => (
-                  <Link key={link.href} href={link.href} role="menuitem" onClick={() => setIsOpen(false)}>{link.label}</Link>
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    role="menuitem"
+                    aria-current={pathname === link.href || pathname.startsWith(`${link.href}/`) ? "page" : undefined}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
                 ))}
               </div>
             )}
