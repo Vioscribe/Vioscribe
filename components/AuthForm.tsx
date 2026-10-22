@@ -183,6 +183,7 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
 
       <button
         type="button"
+        disabled={busy}
         className="text-sm text-stone-500 underline"
         onClick={() => {
           setMode(mode === "login" ? "signup" : "login");
