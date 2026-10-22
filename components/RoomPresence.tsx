@@ -15,6 +15,7 @@ export default function RoomPresence({
   displayName: string;
 }) {
   const [people, setPeople] = useState<Person[]>([]);
+  const [presenceError, setPresenceError] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -31,9 +32,14 @@ export default function RoomPresence({
       setPeople([...unique.values()].sort((a, b) => a.display_name.localeCompare(b.display_name)));
     });
 
-    channel.subscribe(async (status) => {
+    channel.subscribe((status) => {
       if (status === "SUBSCRIBED") {
-        await channel.track({ user_id: userId, display_name: displayName });
+        setPresenceError(false);
+        void channel.track({ user_id: userId, display_name: displayName }).then((result) => {
+          if (result !== "ok") setPresenceError(true);
+        }).catch(() => setPresenceError(true));
+      } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+        setPresenceError(true);
       }
     });
 
@@ -43,7 +49,9 @@ export default function RoomPresence({
   return (
     <section className="space-y-2 rounded-xl border border-stone-200 bg-white p-4">
       <h2 className="font-medium">Here now <span className="text-sm font-normal text-stone-500">({people.length}/4)</span></h2>
-      {people.length === 0 ? <p className="text-sm text-stone-500">Connecting to room presence…</p> : (
+      {presenceError ? (
+        <p role="status" className="text-sm text-amber-700">Room presence is temporarily unavailable. Try refreshing the page.</p>
+      ) : people.length === 0 ? <p className="text-sm text-stone-500">Connecting to room presence…</p> : (
         <ul className="flex flex-wrap gap-2">
           {people.map((person) => (
             <li key={person.user_id} className="rounded-full bg-stone-100 px-3 py-1 text-sm">
