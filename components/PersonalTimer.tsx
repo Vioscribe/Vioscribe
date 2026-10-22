@@ -42,6 +42,8 @@ export default function PersonalTimer({
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const advancing = useRef(false);
+  const controlling = useRef(false);
+  const [controlPending, setControlPending] = useState(false);
 
   const advance = useCallback(async () => {
     if (advancing.current) return;
@@ -105,6 +107,9 @@ export default function PersonalTimer({
   }, [remaining, timer?.timer_state]);
 
   async function control(action: "start" | "pause") {
+    if (controlling.current) return;
+    controlling.current = true;
+    setControlPending(true);
     setError("");
     setNotice("");
     const previousPhase = timer?.timer_phase;
@@ -131,6 +136,9 @@ export default function PersonalTimer({
       }
     } catch {
       setError("Could not update the timer. Please try again.");
+    } finally {
+      controlling.current = false;
+      setControlPending(false);
     }
   }
 
@@ -148,9 +156,9 @@ export default function PersonalTimer({
         {!timerReady ? (
           <button type="button" disabled className="cursor-wait rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-stone-500">Loading timer…</button>
         ) : running ? (
-          <button type="button" onClick={() => void control("pause")} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-100">Pause and log time</button>
+          <button type="button" disabled={controlPending} onClick={() => void control("pause")} className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-100 disabled:opacity-50">Pause and log time</button>
         ) : (
-          <button type="button" onClick={() => void control("start")} className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900">Start {phase === "study" ? "study" : "break"}</button>
+          <button type="button" disabled={controlPending} onClick={() => void control("start")} className="rounded-lg bg-teal-800 px-4 py-2 text-sm font-medium text-white hover:bg-teal-900 disabled:opacity-50">Start {phase === "study" ? "study" : "break"}</button>
         )}
       </div>
       <p className="text-xs text-stone-500">
