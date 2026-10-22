@@ -40,6 +40,7 @@ export default function RoomPresence({
         }).catch(() => setPresenceError(true));
       } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
         setPresenceError(true);
+        setPeople([]);
       }
     });
 
