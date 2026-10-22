@@ -138,7 +138,9 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
           Email
           <input
             type="email"
+            name="email"
             required
+            autoComplete="email"
             className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -148,8 +150,10 @@ export default function AuthForm({ initialMessage = null }: { initialMessage?: s
           Password
           <input
             type={showPassword ? "text" : "password"}
+            name="password"
             required
             minLength={6}
+            autoComplete={mode === "signup" ? "new-password" : "current-password"}
             className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
