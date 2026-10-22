@@ -108,25 +108,29 @@ export default function PersonalTimer({
     setError("");
     setNotice("");
     const previousPhase = timer?.timer_phase;
-    const supabase = createClient();
-    const { data, error: rpcError } = action === "start"
-      ? await supabase.rpc("start_personal_timer", { target_room_id: roomId ?? null })
-      : await supabase.rpc("pause_personal_timer");
-    if (rpcError) {
-      setError(rpcError.message);
-      return;
-    }
-    const updated = timerRow(data);
-    if (updated) {
-      // Align the display clock with the RPC response so a stale one-second
-      // interval tick cannot make a resumed timer appear to gain a second.
-      setNow(Date.now());
-      setTimer(updated);
-      if (action === "pause" && previousPhase !== updated.timer_phase) {
-        setNotice(previousPhase === "study"
-          ? "Study block complete. Your time has been logged; take a break when you’re ready."
-          : "Break complete. Start another study block when you’re ready.");
+    try {
+      const supabase = createClient();
+      const { data, error: rpcError } = action === "start"
+        ? await supabase.rpc("start_personal_timer", { target_room_id: roomId ?? null })
+        : await supabase.rpc("pause_personal_timer");
+      if (rpcError) {
+        setError(rpcError.message);
+        return;
       }
+      const updated = timerRow(data);
+      if (updated) {
+        // Align the display clock with the RPC response so a stale one-second
+        // interval tick cannot make a resumed timer appear to gain a second.
+        setNow(Date.now());
+        setTimer(updated);
+        if (action === "pause" && previousPhase !== updated.timer_phase) {
+          setNotice(previousPhase === "study"
+            ? "Study block complete. Your time has been logged; take a break when you’re ready."
+            : "Break complete. Start another study block when you’re ready.");
+        }
+      }
+    } catch {
+      setError("Could not update the timer. Please try again.");
     }
   }
 
